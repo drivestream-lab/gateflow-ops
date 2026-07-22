@@ -1,0 +1,6 @@
+{
+  "app.title": "gateflow-ops",
+  "nav.logout": "Sign out",
+  "errors.upstreamUnavailable": "The service is temporarily unavailable. Please try again.",
+  "errors.badRequest": "The request could not be processed."
+}
