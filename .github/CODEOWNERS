@@ -1,0 +1,37 @@
+# Frontend / BFF profile — copy to .github/CODEOWNERS in each app repo
+# Replace @drivestream-lab/... with actual GitHub org/team names.
+#
+# Branch protection required:
+#   Settings → Branches → develop → "Require review from Code Owners" ON
+#
+# Sign-off workflow: launchpad/playbook/ship/delivery-workflow.md § Sign-off workflow
+
+# ── Spec pipeline reports (skill gates) ──────────────────────────────────────
+
+# TDD requires PE sign-off before /spec-implementation-plan runs
+/docs/specification/reports/Technical-Review-*       @drivestream-lab/pe-team
+
+# Implementation plan requires dev lead review before board seed (gh issue create per wave)
+/docs/specification/reports/Implementation-Plan-*    @drivestream-lab/frontend-devs
+
+# Ground reports gate the next wave — tech lead must approve
+/docs/specification/reports/Ground-Report-*          @drivestream-lab/frontend-devs
+
+# Feasibility reports — PM answers product questions on the PR
+/docs/specification/reports/Feasibility-Report-*     @drivestream-lab/pm-team @drivestream-lab/frontend-devs
+
+# ── Product specs ─────────────────────────────────────────────────────────────
+
+/docs/specification/product/                         @drivestream-lab/pm-team @drivestream-lab/frontend-devs
+/docs/specification/adr/                             @drivestream-lab/pe-team
+/docs/specification/as-built/                        @drivestream-lab/frontend-devs
+
+# ── Source ────────────────────────────────────────────────────────────────────
+
+/app/                                                @drivestream-lab/frontend-devs
+/lib/                                                @drivestream-lab/frontend-devs
+/src/                                                @drivestream-lab/frontend-devs
+
+# ── Default ───────────────────────────────────────────────────────────────────
+
+*                                                    @drivestream-lab/frontend-devs

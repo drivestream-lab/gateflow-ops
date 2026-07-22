@@ -1,0 +1,5 @@
+[
+  { "value": "emea", "label": "Europe, Middle East & Africa", "default": true },
+  { "value": "amer", "label": "Americas" },
+  { "value": "apac", "label": "Asia Pacific" }
+]

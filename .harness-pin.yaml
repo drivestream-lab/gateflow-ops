@@ -1,0 +1,21 @@
+profile: frontend
+delivery_contract: sdd-delivery/v2
+
+rules:
+  repo: drivestream-lab/nextjs-bff-rules
+  ref: v0.1.6
+
+agent_skills:
+  repo: drivestream-lab/prayog-skills
+  ref: v0.4.3
+  profile: frontend
+  skills:
+    - spec-draft
+    - initiative-feasibility
+    - spec-technical-review
+    - spec-implementation-plan
+    - board-seed
+    - pre-implement
+    - loop-spec
+    - ground-spec
+    - verify
