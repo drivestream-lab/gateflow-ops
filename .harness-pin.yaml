@@ -1,4 +1,4 @@
-profile: frontend
+profile: nextjs-frontend
 delivery_contract: sdd-delivery/v2
 
 rules:
@@ -8,7 +8,7 @@ rules:
 agent_skills:
   repo: drivestream-lab/prayog-skills
   ref: v0.5.0-rc.2
-  profile: frontend
+  profile: nextjs-frontend
   skills:
     - spec-draft
     - initiative-feasibility

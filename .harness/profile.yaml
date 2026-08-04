@@ -1,7 +1,7 @@
 # Next.js BFF portal SDD harness — layout defaults for development skills.
 # launchpad sync-harness copies this to .harness/profile.yaml in consumer app repos.
 
-profile: frontend
+profile: nextjs-frontend
 
 layout:
   constitution: AGENTS.md
