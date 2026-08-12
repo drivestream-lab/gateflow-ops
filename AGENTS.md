@@ -1,6 +1,7 @@
 # Agent guide (gateflow-ops)
 
 <!-- launchpad:harness-start -->
+
 ## Harness (managed by launchpad — do not edit)
 
 Shared rules: **`.cursor/rules/*.mdc`** (git submodule, pinned at **v0.1.6**).
@@ -52,17 +53,18 @@ Engineering work is tracked on **[drivestream-lab Board](https://github.com/orgs
   `initiative-closure-signoff-app` → `/purge-initiative-artifacts-meta` →
   `initiative-closure-pr-action-meta` → `initiative-closure-signoff-meta`.
   No required `/open-draft-pr` when pin `authorization: automated` on those PR nodes.
+
 <!-- launchpad:harness-end -->
 
 ## Product (what to build)
 
 Start here: [`docs/specification/README.md`](docs/specification/README.md)
 
-| Layer | Entry point | Purpose |
-|-------|-------------|---------|
-| **Product specs** | [`docs/specification/product/`](docs/specification/product/) | What this service does |
-| **As-built** | [`docs/specification/as-built/implementation-status.md`](docs/specification/as-built/implementation-status.md) | Live vs deferred; verification matrix |
-| **ADRs** | [`docs/specification/adr/README.md`](docs/specification/adr/README.md) | Architecture decisions |
+| Layer             | Entry point                                                                                                    | Purpose                               |
+| ----------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| **Product specs** | [`docs/specification/product/`](docs/specification/product/)                                                   | What this service does                |
+| **As-built**      | [`docs/specification/as-built/implementation-status.md`](docs/specification/as-built/implementation-status.md) | Live vs deferred; verification matrix |
+| **ADRs**          | [`docs/specification/adr/README.md`](docs/specification/adr/README.md)                                         | Architecture decisions                |
 
 Active work: board issue **Spec path** → product initiative spec (from PRD handoff).
 

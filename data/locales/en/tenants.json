@@ -1,0 +1,18 @@
+{
+  "page.title": "Tenant",
+  "page.description": "View your tenant identity and invite teammates.",
+  "fields.tenantId": "Tenant ID",
+  "fields.name": "Name",
+  "fields.workspaceRoot": "Workspace root",
+  "fields.repos": "Repos",
+  "fields.board": "Board default",
+  "empty.repos": "No repos on this tenant yet.",
+  "invite.title": "Invite teammate",
+  "invite.identity": "Identity (email or handle)",
+  "invite.submit": "Send invite",
+  "invite.success": "Invite succeeded.",
+  "errors.loadFailed": "Could not load tenant detail.",
+  "errors.inviteFailed": "Invite failed.",
+  "errors.missingTenant": "No tenant is bound to this session.",
+  "loading": "Loading tenant…"
+}
