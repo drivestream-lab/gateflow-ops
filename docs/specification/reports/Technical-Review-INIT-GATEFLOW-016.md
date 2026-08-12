@@ -15,7 +15,7 @@
 | Date | 2026-08-12 |
 | Branch | `chore/INIT-GATEFLOW-016-spec-gateflow-ops` (spec PR — TDD published via Forge) |
 | Initiative segment | `INIT-GATEFLOW-016` |
-| Status | Draft |
+| Status | Accepted |
 | Review deadline | 2026-08-19 |
 | Deciders | PE: @drivestream-lab/prayog-pe-team — explicit LGTM required, not approval by silence |
 
@@ -142,7 +142,7 @@ be named after UI workflows (`onboarding/`, `mission-control/`).
 
 | Finding | Classification | ADR file / TDD section | product_constraints | Product exclusions | Recommendation / default | Status | Digest |
 |---------|----------------|------------------------|---------------------|--------------------|--------------------------|--------|--------|
-| FF-01 | ADR_REQUIRED | `docs/specification/adr/adr-001-ui-primitives-shadcn-semantic-tokens.md` | `[REQ-01…REQ-31]` | REQ behavior owned by spec | Option A (shadcn + semantic tokens); PE Accept | Draft | `sha256:fd47b3df782bfc5151b47448ccb2315f098bcff537d91e9860b9a6e882ee392d` |
+| FF-01 | ADR_REQUIRED | `docs/specification/adr/adr-001-ui-primitives-shadcn-semantic-tokens.md` | `[REQ-01…REQ-31]` | REQ behavior owned by spec | Option A (shadcn + semantic tokens); PE Accept | Accepted | `sha256:56afdb8dafb0866782cde95f30bc4b24605106b64f9e564e8449329b2b7c2fde` |
 | FF-02 | TDD_ONLY | §2 BFF resource map | CTR-01–07 | none | Folders under `app/api/gateflow/<resource>/` as table above | Resolved | N/A |
 | FF-03 | TDD_ONLY | §5 / §9 | — | — | Live verify uses `AUTH_MODE=jwt-upstream` + real `UPSTREAM_BASE_URL` | Resolved | N/A |
 | FF-04 | TDD_ONLY | §5 | — | — | One verify script per wave in `tests/verify/` + feature-map row | Resolved | N/A |
@@ -259,8 +259,8 @@ be named after UI workflows (`onboarding/`, `mission-control/`).
 | PM questions outstanding | 0 |
 | Domain questions outstanding | 0 |
 | Selected workflow outcome | `pass` — engineering package ready for PE Accept of TDD + ADR-001 |
-| Ready for PE review | YES |
-| **Ready for /spec-implementation-plan** | **NO — final exact-head PE approval required** |
+| Ready for PE review | YES — Accepted package on tip |
+| **Ready for /spec-implementation-plan** | **YES — after this Accepted tip is published (Gate 2 still `spec-pending` until plan + `spec-lgtm`)** |
 
 ---
 
@@ -324,12 +324,12 @@ handoff:
   blockers: []
   signals:
     ready_for_pe_review: true
-    ready_for_plan: false
+    ready_for_plan: true
     adr_required: 1
     adr_paths:
       - docs/specification/adr/adr-001-ui-primitives-shadcn-semantic-tokens.md
     adr_digests:
-      - sha256:fd47b3df782bfc5151b47448ccb2315f098bcff537d91e9860b9a6e882ee392d
+      - sha256:56afdb8dafb0866782cde95f30bc4b24605106b64f9e564e8449329b2b7c2fde
     tdd_only: 5
     deferred: 2
     new_adr_files_created: 0

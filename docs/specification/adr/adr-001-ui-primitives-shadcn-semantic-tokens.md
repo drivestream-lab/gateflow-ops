@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | Draft |
+| Status | Accepted |
 | Initiative | INIT-GATEFLOW-016 (was platform baseline; now bound for Mission Control UI waves) |
 | Feasibility finding | FF-01 (`ALTERNATIVE: Accept ADR-001 vs packaged kit`) |
 | Technical review | `docs/specification/reports/Technical-Review-INIT-GATEFLOW-016.md` |
@@ -13,9 +13,10 @@
 | spec_amendment_required | `false` |
 | supersedes | none |
 | superseded_by | none |
-| Decision owner | PE |
-| Approval evidence | Pending |
-| Approved head | Pending |
+| Decision owner | @nikd10x |
+| Approval evidence | https://github.com/drivestream-lab/gateflow-ops/pull/19#issuecomment-5266837472 |
+| Approved head | a90758480ea2d2215ad00d11227c9883458b6285 |
+| Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:c4ac03a5a6163e51be5cc45caa2796c810ca869c941373458b88b0ca8bf2bdfc |
 
 > If `changes_user_visible_behavior` or `spec_amendment_required` would be
 > `true`, **stop**: amend and re-approve the product spec before this ADR may
