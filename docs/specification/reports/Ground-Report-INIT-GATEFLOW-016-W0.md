@@ -6,7 +6,7 @@
 | Spec              | `docs/specification/product/INIT-GATEFLOW-016-gateflow-ops.md`                                                                    |
 | Initiative        | INIT-GATEFLOW-016                                                                                                                 |
 | Date              | 2026-08-12                                                                                                                        |
-| Wave head (exact) | `feature/INIT-GATEFLOW-016-w0-identity-onboarding` @ `cce93b8e27988274b6cd994c251124e19d3644f4` — reviewed head for sign-off      |
+| Wave head (exact) | `feature/INIT-GATEFLOW-016-w0-identity-onboarding` @ `b65fd833156827cd4c8e1d75dd4cf6af4b63093e` — reviewed head for sign-off      |
 | PR URL (if any)   | https://github.com/drivestream-lab/gateflow-ops/pull/26 — read-only context                                                       |
 | Status            | Draft                                                                                                                             |
 | Review deadline   | 2026-08-14                                                                                                                        |
@@ -94,7 +94,7 @@
 > from this skill. Human approved was `wave-acceptance`. At `wave-signoff`
 > the human merges/publishes the **exact wave head** only.
 
-- PR URL / wave head: https://github.com/drivestream-lab/gateflow-ops/pull/26 @ `cce93b8e27988274b6cd994c251124e19d3644f4` — **expected reviewed head SHA** (pre-closeout publish may advance tip with this report)
+- PR URL / wave head: https://github.com/drivestream-lab/gateflow-ops/pull/26 @ `b65fd833156827cd4c8e1d75dd4cf6af4b63093e` — **expected reviewed head SHA** (pre-closeout publish may advance tip with this report)
 - Ground Report path: `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W0.md`
 - Accept evidence: `wave-acceptance` on tip (wave-acceptance) — human approved already
 - Wave-Execution path: `docs/specification/reports/Wave-Execution-INIT-GATEFLOW-016-W0.md`
@@ -151,7 +151,7 @@ handoff:
       - REQ-06
       - REQ-07
       - REQ-08
-    tip_sha: cce93b8e27988274b6cd994c251124e19d3644f4
+    tip_sha: b65fd833156827cd4c8e1d75dd4cf6af4b63093e
     pr_url: https://github.com/drivestream-lab/gateflow-ops/pull/26
     learning_extract: docs/specification/reports/Learning-Extract-INIT-GATEFLOW-016-W0.md
   next_candidates:
