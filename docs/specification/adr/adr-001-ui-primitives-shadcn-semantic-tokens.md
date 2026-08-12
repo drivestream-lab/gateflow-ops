@@ -15,7 +15,7 @@
 | superseded_by | none |
 | Decision owner | @nikd10x |
 | Approval evidence | https://github.com/drivestream-lab/gateflow-ops/pull/19#issuecomment-5266837472 |
-| Approved head | a90758480ea2d2215ad00d11227c9883458b6285 |
+| Approved head | 8a5d5b8551c645f449d2d1b6725f1925ec08d1f6 |
 | Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:c4ac03a5a6163e51be5cc45caa2796c810ca869c941373458b88b0ca8bf2bdfc |
 
 > If `changes_user_visible_behavior` or `spec_amendment_required` would be
