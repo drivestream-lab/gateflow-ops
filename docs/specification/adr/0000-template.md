@@ -1,21 +1,16 @@
-# ADR-NNNN: <decision title>
+# ADR template (use Prayog)
 
-Status: Proposed
-Date: YYYY-MM-DD
-Deciders: <names>
+Do **not** author ADRs from this stub alone. Copy and fill:
 
-## Context
+`prayog-skills/skills/development/spec-technical-review/references/adr-template.md`
 
-<constraint driving the decision>
+| Key | Value |
+|-----|-------|
+| Path | `docs/specification/adr/adr-{NNN}-{slug}.md` |
+| Status start | `Draft` |
+| One decision | Split files if multiple independent questions |
+| Body length | ~150–400 words (Product decisions excluded → Revisit triggers) |
+| Product boundary | Cite `REQ-*` by id only; `changes_user_visible_behavior: false` for Accepted |
+| Lint | `scripts/adr_boundary_lint.py` before T12 PASS (when initiative sources exist) |
 
-## Options considered
-
-| Option | Effort | Risk | Notes |
-| ------ | ------ | ---- | ----- |
-
-## Decision
-
-## Consequences
-
-<!-- Proposed by skills/agents, accepted by humans; lands in the same PR as the
-implementing change; append-only (supersede, never edit). -->
+Accepted ADRs are append-only: supersede, never edit in place.
