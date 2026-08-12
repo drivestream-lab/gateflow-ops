@@ -27,13 +27,13 @@ not invent their own outer grid.
 └──────────────┴──────────────────────────────┴───────────────┘
 ```
 
-| Region | Purpose | Persist across routes? |
-|--------|---------|------------------------|
-| **App chrome** | Product identity, signed-in user, logout / global actions | Yes — route-group layout |
-| **Left nav** | Primary navigation (config-driven) | Yes — shell |
-| **Page header** | This page’s title, crumbs, primary actions | Per page — required |
-| **Page body** | Lists, forms, detail, status | Per page |
-| **Context panel** | Inspector, help, secondary detail | Optional — omit when unused |
+| Region            | Purpose                                                   | Persist across routes?      |
+| ----------------- | --------------------------------------------------------- | --------------------------- |
+| **App chrome**    | Product identity, signed-in user, logout / global actions | Yes — route-group layout    |
+| **Left nav**      | Primary navigation (config-driven)                        | Yes — shell                 |
+| **Page header**   | This page’s title, crumbs, primary actions                | Per page — required         |
+| **Page body**     | Lists, forms, detail, status                              | Per page                    |
+| **Context panel** | Inspector, help, secondary detail                         | Optional — omit when unused |
 
 **Mobile:** same nav config; left nav becomes a sheet/drawer opened from the
 page header (shadcn `Sidebar` + trigger). Do not maintain a second nav tree.
@@ -44,14 +44,14 @@ page header (shadcn `Sidebar` + trigger). Do not maintain a second nav tree.
 
 Ops UI should feel dense, readable, and quiet — not a marketing landing page.
 
-| Principle | Do | Don’t |
-|-----------|----|--------|
-| Surfaces | `bg-background` app · `bg-surface` panels · one `border-border` | Competing card-in-card chrome |
-| Hierarchy | One strong page title; nav quieter than content | Multiple hero headlines |
-| Density | Comfortable padding (`p-4`–`p-6` content); compact nav rows | Huge empty hero bands in the shell |
-| Focus | Primary CTA only in page header | CTA clusters in nav + header + body |
-| Motion | Sidebar collapse / sheet only | Decorative motion in the shell |
-| Tokens | Semantic utilities only (ADR-001) | Raw hex, palette classes in layout JSX |
+| Principle | Do                                                              | Don’t                                  |
+| --------- | --------------------------------------------------------------- | -------------------------------------- |
+| Surfaces  | `bg-background` app · `bg-surface` panels · one `border-border` | Competing card-in-card chrome          |
+| Hierarchy | One strong page title; nav quieter than content                 | Multiple hero headlines                |
+| Density   | Comfortable padding (`p-4`–`p-6` content); compact nav rows     | Huge empty hero bands in the shell     |
+| Focus     | Primary CTA only in page header                                 | CTA clusters in nav + header + body    |
+| Motion    | Sidebar collapse / sheet only                                   | Decorative motion in the shell         |
+| Tokens    | Semantic utilities only (ADR-001)                               | Raw hex, palette classes in layout JSX |
 
 ---
 
@@ -60,14 +60,14 @@ Ops UI should feel dense, readable, and quiet — not a marketing landing page.
 Implement under `components/workspace/`. Build on shadcn Sidebar / Button /
 Separator / Breadcrumb (add via CLI as needed).
 
-| Component | Slot | Responsibility |
-|-----------|------|----------------|
-| `WorkspaceShell` | Root | `SidebarProvider` + left nav + inset; wraps authenticated children |
-| `WorkspaceNav` | Left | Renders nav config; active route via pathname; groups/labels |
+| Component         | Slot         | Responsibility                                                               |
+| ----------------- | ------------ | ---------------------------------------------------------------------------- |
+| `WorkspaceShell`  | Root         | `SidebarProvider` + left nav + inset; wraps authenticated children           |
+| `WorkspaceNav`    | Left         | Renders nav config; active route via pathname; groups/labels                 |
 | `WorkspaceChrome` | Top of inset | Optional thin product/session strip if not folded into sidebar header/footer |
-| `PageHeader` | Header | Title, breadcrumb, actions — **required** on authenticated pages |
-| `PageBody` | Content | Width/padding for the feature; scrollable |
-| `ContextPanel` | Right | Optional; only mount when the page passes content |
+| `PageHeader`      | Header       | Title, breadcrumb, actions — **required** on authenticated pages             |
+| `PageBody`        | Content      | Width/padding for the feature; scrollable                                    |
+| `ContextPanel`    | Right        | Optional; only mount when the page passes content                            |
 
 **Nav data:** static config (e.g. `lib/workspace-nav.ts` or `data/master/`),
 not hard-coded link arrays inside JSX. Filter by role later without changing
@@ -127,12 +127,12 @@ app/(dashboard)/layout.tsx
 
 ## Width and spacing defaults
 
-| Area | Guidance |
-|------|----------|
-| Left nav | Fixed width when expanded; icon-collapsed on desktop (`icon` collapsible) |
-| Page header | Full inset width; `h-14`–`h-16`; bottom border |
-| Page body | `p-4` md:`p-6`; max width only when readability needs it (forms), not for full-bleed tables |
-| Context panel | Fixed ~320px; own border-l; hide below `lg` or move to sheet |
+| Area          | Guidance                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| Left nav      | Fixed width when expanded; icon-collapsed on desktop (`icon` collapsible)                   |
+| Page header   | Full inset width; `h-14`–`h-16`; bottom border                                              |
+| Page body     | `p-4` md:`p-6`; max width only when readability needs it (forms), not for full-bleed tables |
+| Context panel | Fixed ~320px; own border-l; hide below `lg` or move to sheet                                |
 
 Exact tokenized sizes belong in CSS/components; this file owns the **roles**.
 
@@ -140,14 +140,14 @@ Exact tokenized sizes belong in CSS/components; this file owns the **roles**.
 
 ## Do / don’t
 
-| Do | Don’t |
-|----|--------|
-| Use `WorkspaceShell` for every authenticated page | Hand-roll a new sidebar per feature |
-| Put title + primary action in `PageHeader` | Duplicate app title / logout in every page |
-| One primary Card on detail/edit tasks | Nested card stacks for decoration |
-| Config-driven nav | Hard-coded `<a>` lists in layout JSX |
-| Semantic tokens | `bg-slate-*` / raw hex in shell |
-| Sheet nav on small screens | A second mobile-only sitemap |
+| Do                                                | Don’t                                      |
+| ------------------------------------------------- | ------------------------------------------ |
+| Use `WorkspaceShell` for every authenticated page | Hand-roll a new sidebar per feature        |
+| Put title + primary action in `PageHeader`        | Duplicate app title / logout in every page |
+| One primary Card on detail/edit tasks             | Nested card stacks for decoration          |
+| Config-driven nav                                 | Hard-coded `<a>` lists in layout JSX       |
+| Semantic tokens                                   | `bg-slate-*` / raw hex in shell            |
+| Sheet nav on small screens                        | A second mobile-only sitemap               |
 
 ---
 
@@ -164,12 +164,12 @@ Exact tokenized sizes belong in CSS/components; this file owns the **roles**.
 
 ## Relationship to other docs
 
-| Doc | Owns |
-|-----|------|
-| [ADR-001](../specification/adr/adr-001-ui-primitives-shadcn-semantic-tokens.md) | Primitive kit + tokens |
-| [component-development.md](./component-development.md) | Primitive / feature / page tiers |
-| This file | Regions, shell components, page-type chrome |
-| `docs/specification/product/` | Which routes exist (route map) |
+| Doc                                                                             | Owns                                        |
+| ------------------------------------------------------------------------------- | ------------------------------------------- |
+| [ADR-001](../specification/adr/adr-001-ui-primitives-shadcn-semantic-tokens.md) | Primitive kit + tokens                      |
+| [component-development.md](./component-development.md)                          | Primitive / feature / page tiers            |
+| This file                                                                       | Regions, shell components, page-type chrome |
+| `docs/specification/product/`                                                   | Which routes exist (route map)              |
 
 When product routes land, update the nav config and the route map together —
 not the shell structure.

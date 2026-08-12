@@ -4,8 +4,18 @@
 import common from "@/data/locales/en/common.json";
 import auth from "@/data/locales/en/auth.json";
 import system from "@/data/locales/en/system.json";
+import workspace from "@/data/locales/en/workspace.json";
+import tenants from "@/data/locales/en/tenants.json";
+import fleet from "@/data/locales/en/fleet.json";
 
-const catalogs: Record<string, Record<string, string>> = { common, auth, system };
+const catalogs: Record<string, Record<string, string>> = {
+  common,
+  auth,
+  system,
+  workspace,
+  tenants,
+  fleet,
+};
 
 export function t(key: string): string {
   const dot = key.indexOf(".");

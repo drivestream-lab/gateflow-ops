@@ -1,22 +1,22 @@
 # ADR-001 — UI primitives via shadcn + semantic design tokens
 
-| Field | Value |
-|-------|-------|
-| Status | Accepted |
-| Initiative | INIT-GATEFLOW-016 (was platform baseline; now bound for Mission Control UI waves) |
-| Feasibility finding | FF-01 (`ALTERNATIVE: Accept ADR-001 vs packaged kit`) |
-| Technical review | `docs/specification/reports/Technical-Review-INIT-GATEFLOW-016.md` |
-| Source spec | `docs/specification/product/INIT-GATEFLOW-016-gateflow-ops.md` |
-| Source spec digest | `sha256:df50e720703a1d65b1cdac960b1ecb4826c0f87245ed86e0f128d34bb2b2506a` |
-| product_constraints | `[REQ-01, REQ-02, REQ-03, REQ-04, REQ-05, REQ-06, REQ-07, REQ-08, REQ-09, REQ-10, REQ-11, REQ-12, REQ-13, REQ-14, REQ-15, REQ-16, REQ-17, REQ-18, REQ-19, REQ-20, REQ-21, REQ-22, REQ-23, REQ-24, REQ-25, REQ-26, REQ-27, REQ-28, REQ-29, REQ-30, REQ-31]` — UI composition mechanism only |
-| changes_user_visible_behavior | `false` |
-| spec_amendment_required | `false` |
-| supersedes | none |
-| superseded_by | none |
-| Decision owner | @nikd10x |
-| Approval evidence | https://github.com/drivestream-lab/gateflow-ops/pull/19#issuecomment-5266837472 |
-| Approved head | 8a5d5b8551c645f449d2d1b6725f1925ec08d1f6 |
-| Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:16ffadbace2fa0e6780b22f68bfae973728448611ad8acb420f7fac7479484fd |
+| Field                         | Value                                                                                                                                                                                                                                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Status                        | Accepted                                                                                                                                                                                                                                                                                   |
+| Initiative                    | INIT-GATEFLOW-016 (was platform baseline; now bound for Mission Control UI waves)                                                                                                                                                                                                          |
+| Feasibility finding           | FF-01 (`ALTERNATIVE: Accept ADR-001 vs packaged kit`)                                                                                                                                                                                                                                      |
+| Technical review              | `docs/specification/reports/Technical-Review-INIT-GATEFLOW-016.md`                                                                                                                                                                                                                         |
+| Source spec                   | `docs/specification/product/INIT-GATEFLOW-016-gateflow-ops.md`                                                                                                                                                                                                                             |
+| Source spec digest            | `sha256:df50e720703a1d65b1cdac960b1ecb4826c0f87245ed86e0f128d34bb2b2506a`                                                                                                                                                                                                                  |
+| product_constraints           | `[REQ-01, REQ-02, REQ-03, REQ-04, REQ-05, REQ-06, REQ-07, REQ-08, REQ-09, REQ-10, REQ-11, REQ-12, REQ-13, REQ-14, REQ-15, REQ-16, REQ-17, REQ-18, REQ-19, REQ-20, REQ-21, REQ-22, REQ-23, REQ-24, REQ-25, REQ-26, REQ-27, REQ-28, REQ-29, REQ-30, REQ-31]` — UI composition mechanism only |
+| changes_user_visible_behavior | `false`                                                                                                                                                                                                                                                                                    |
+| spec_amendment_required       | `false`                                                                                                                                                                                                                                                                                    |
+| supersedes                    | none                                                                                                                                                                                                                                                                                       |
+| superseded_by                 | none                                                                                                                                                                                                                                                                                       |
+| Decision owner                | @nikd10x                                                                                                                                                                                                                                                                                   |
+| Approval evidence             | https://github.com/drivestream-lab/gateflow-ops/pull/19#issuecomment-5266837472                                                                                                                                                                                                            |
+| Approved head                 | 8a5d5b8551c645f449d2d1b6725f1925ec08d1f6                                                                                                                                                                                                                                                   |
+| Lint evidence                 | adr_boundary_lint.py 2/2, PASS, sha256:16ffadbace2fa0e6780b22f68bfae973728448611ad8acb420f7fac7479484fd                                                                                                                                                                                    |
 
 > If `changes_user_visible_behavior` or `spec_amendment_required` would be
 > `true`, **stop**: amend and re-approve the product spec before this ADR may
@@ -36,11 +36,11 @@ UI surfaces for REQ-01–REQ-31 share one primitive ownership model. The chassis
 
 Grounded against `components/ui/*`, `components.json` (`cssVariables: true`), no packaged design-system imports.
 
-| Option | Benefits | Costs / risks |
-|--------|----------|---------------|
-| A — shadcn copy-in + semantic tokens | Matches chassis; one token SSOT | Team maintains copied primitives |
-| B — Packaged design-system React library | Rich catalog / upstream docs | Parallel APIs; theme conflict; hard reverse |
-| C — Headless only, no shadcn generator | Maximum control | Rebuilds variant/CLI discipline already settled |
+| Option                                   | Benefits                        | Costs / risks                                   |
+| ---------------------------------------- | ------------------------------- | ----------------------------------------------- |
+| A — shadcn copy-in + semantic tokens     | Matches chassis; one token SSOT | Team maintains copied primitives                |
+| B — Packaged design-system React library | Rich catalog / upstream docs    | Parallel APIs; theme conflict; hard reverse     |
+| C — Headless only, no shadcn generator   | Maximum control                 | Rebuilds variant/CLI discipline already settled |
 
 ## Recommendation
 
@@ -57,7 +57,7 @@ MDC and `component-development.md` are day-to-day checklists; **this ADR is the 
 ## Consequences
 
 - Positive: reviews reject alternate kits by citing this ADR; token changes propagate without page restyles; Radix/Slot patterns stay canonical.
-- Negative: gaps use `npx shadcn add` or hand-rolled CVA — not a second kit; brand *values* stay in guidance/CSS (this ADR enforces mechanism, not hex).
+- Negative: gaps use `npx shadcn add` or hand-rolled CVA — not a second kit; brand _values_ stay in guidance/CSS (this ADR enforces mechanism, not hex).
 
 ## Revisit triggers
 
