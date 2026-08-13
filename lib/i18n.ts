@@ -10,6 +10,7 @@ import fleet from "@/data/locales/en/fleet.json";
 import programmes from "@/data/locales/en/programmes.json";
 import runs from "@/data/locales/en/runs.json";
 import initiatives from "@/data/locales/en/initiatives.json";
+import metrics from "@/data/locales/en/metrics.json";
 
 const catalogs: Record<string, Record<string, string>> = {
   common,
@@ -21,6 +22,7 @@ const catalogs: Record<string, Record<string, string>> = {
   programmes,
   runs,
   initiatives,
+  metrics,
 };
 
 export function t(key: string): string {

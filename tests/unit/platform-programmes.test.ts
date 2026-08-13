@@ -27,9 +27,9 @@ describe("navItemsForRole", () => {
     expect(hrefs).toEqual(["/", "/programmes"]);
   });
 
-  it("shows Status + Tenant + Fleet + Runs + Initiatives for tenant_admin", () => {
+  it("shows Status + Tenant + Fleet + Runs + Initiatives + Metrics for tenant_admin", () => {
     const hrefs = navItemsForRole("tenant_admin").map((i) => i.href);
-    expect(hrefs).toEqual(["/", "/tenant", "/fleet", "/runs", "/initiatives"]);
+    expect(hrefs).toEqual(["/", "/tenant", "/fleet", "/runs", "/initiatives", "/metrics"]);
   });
 
   it("shows only unscoped items for unknown role", () => {
@@ -46,6 +46,7 @@ describe("navItemsForRole", () => {
       "/fleet",
       "/runs",
       "/initiatives",
+      "/metrics",
     ]);
   });
 });

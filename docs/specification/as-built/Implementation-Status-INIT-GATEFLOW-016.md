@@ -8,7 +8,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 | CAP-P | Platform programmes list/create/detail + tenant_admin attach; role-filtered nav (REQ-32–37)           | 🔧 implemented (backfill)           | unit: `tests/unit/platform-programmes.test.ts`; live: `tests/verify/03-platform-programme-onboard.md`                                                 |
 | W1    | CAP-C wave operations (start lanes, runs cockpit, forge authorize)                                    | ✅ human_approved (wave-acceptance) | unit: `tests/unit/run-stop-presentation.test.ts`; live: `tests/verify/03-w1-wave-operations.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W1.md`      |
 | W2    | CAP-F initiative tracking                                                                             | ✅ human_approved (wave-acceptance) | unit: `tests/unit/initiative-composition.test.ts`; live: `tests/verify/04-w2-initiative-tracking.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W2.md` |
-| W3    | CAP-G metrics                                                                                         | ⏳ not started                      | —                                                                                                                                                     |
+| W3    | CAP-G metrics                                                                                         | ✅ human_approved (wave-acceptance) | unit: `tests/unit/metrics-empty.test.ts`; live: `tests/verify/05-w3-metrics-efficacy.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W3.md`             |
 | W4    | CAP-D/E checkpoints + board                                                                           | ⏳ not started                      | —                                                                                                                                                     |
 
 ## W0 notes
@@ -49,3 +49,13 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - Optional deep-link to `/runs`; not folded into Fleet or Runs cockpit
 - Live: `tests/verify/04-w2-initiative-tracking.md` (human at wave-acceptance)
 - Ground contracts for W3: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W2.md` §Contracts produced
+
+## W3 notes (CAP-G)
+
+- BFF: `app/api/gateflow/metrics` (`?op=runs|skill-efficacy|factory-effectiveness|delivery-scorecard`)
+- UI: `/metrics` — `components/metrics/metrics-panels.tsx`; nav `tenant_admin` → Metrics
+- Empty series labeled honestly via `isMetricsSeriesEmpty` (no mock charts)
+- Skill-efficacy filters: `model_id`, `prompt_revision`
+- Not folded into Fleet / Runs / Initiatives
+- Live: `tests/verify/05-w3-metrics-efficacy.md` (human at wave-acceptance)
+- Ground contracts for W4: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W3.md` §Contracts produced
