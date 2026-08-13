@@ -6,6 +6,8 @@
   "nav.runs": "Runs",
   "nav.initiatives": "Initiatives",
   "nav.metrics": "Metrics",
+  "nav.checkpoints": "Checkpoints",
+  "nav.board": "Board",
   "chrome.signedIn": "Signed in",
   "chrome.menu": "Open navigation",
   "chrome.primaryNav": "Primary navigation"

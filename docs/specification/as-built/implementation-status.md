@@ -14,5 +14,4 @@ changes.** Verification rows must match `tests/README.md`.
 | INIT-GATEFLOW-016 W1 CAP-C wave operations                  | ✅ human_approved | unit `run-stop-presentation.test.ts`; live `tests/verify/03-w1-wave-operations.md`; ground `Ground-Report-INIT-GATEFLOW-016-W1.md`                    |
 | INIT-GATEFLOW-016 W2 CAP-F initiative tracking              | ✅ human_approved | unit `initiative-composition.test.ts`; live `tests/verify/04-w2-initiative-tracking.md`; ground `Ground-Report-INIT-GATEFLOW-016-W2.md`               |
 | INIT-GATEFLOW-016 W3 CAP-G metrics & efficacy               | ✅ human_approved | unit `metrics-empty.test.ts`; live `tests/verify/05-w3-metrics-efficacy.md`; ground `Ground-Report-INIT-GATEFLOW-016-W3.md`                           |
-
-_Product wave W4 not started — see initiative as-built detail._
+| INIT-GATEFLOW-016 W4 CAP-D/E checkpoints + board            | 🔧 implemented    | unit `checkpoint-miss.test.ts`, `board-helpers.test.ts`; live `tests/verify/06-w4-checkpoints-board.md` (human acceptance pending)                    |

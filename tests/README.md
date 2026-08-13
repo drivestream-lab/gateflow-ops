@@ -17,6 +17,8 @@ Ownership per testing-verify-flows.mdc. Rows here must match
 | Wave ops / runs / forge (REQ-09–12)                  | `run-stop-presentation.test.ts`  | `verify/03-w1-wave-operations.md`                                    |
 | Initiative tracking / readouts / closure (REQ-13–21) | `initiative-composition.test.ts` | `verify/04-w2-initiative-tracking.md`                                |
 | Metrics / efficacy / scorecard (REQ-22–25)           | `metrics-empty.test.ts`          | `verify/05-w3-metrics-efficacy.md`                                   |
+| Checkpoints status/history (REQ-26–27)               | `checkpoint-miss.test.ts`        | `verify/06-w4-checkpoints-board.md`                                  |
+| Board tickets list/create/status/link (REQ-28–31)    | `board-helpers.test.ts`          | `verify/06-w4-checkpoints-board.md`                                  |
 
 **No-overlap policy:** full HTTP journeys live in verify only; unit tests own
 extracted branching logic. New feature ⇒ new row, in the same PR.
