@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAttachTenantAdmin, useProgramme, useRefreshProgrammeCatalogue } from "@/hooks/use-programmes";
+import {
+  useAttachTenantAdmin,
+  useProgramme,
+  useRefreshProgrammeCatalogue,
+} from "@/hooks/use-programmes";
 import { useTranslation } from "@/lib/i18n";
 
 interface ProgrammeDetailProps {
@@ -38,10 +42,7 @@ export function ProgrammeDetail({ programmeId }: ProgrammeDetailProps) {
   return (
     <div className="space-y-6">
       <p className="text-sm">
-        <Link
-          href="/programmes"
-          className="text-accent underline-offset-2 hover:underline"
-        >
+        <Link href="/programmes" className="text-accent underline-offset-2 hover:underline">
           {t("actions.backToList")}
         </Link>
       </p>
@@ -96,7 +97,10 @@ export function ProgrammeDetail({ programmeId }: ProgrammeDetailProps) {
             </thead>
             <tbody>
               {programme.repoCatalogue.map((c) => (
-                <tr key={`${c.org}/${c.repo}/${c.serviceKey}`} className="border-b border-border last:border-0">
+                <tr
+                  key={`${c.org}/${c.repo}/${c.serviceKey}`}
+                  className="border-b border-border last:border-0"
+                >
                   <td className="py-2 pr-4 font-mono text-xs">
                     {c.org}/{c.repo}
                   </td>
@@ -128,9 +132,7 @@ export function ProgrammeDetail({ programmeId }: ProgrammeDetailProps) {
                   setPassword("");
                   setLastUserId(result.userId);
                   setAttachMessage(
-                    result.created
-                      ? t("attach.successCreated")
-                      : t("attach.successExisting"),
+                    result.created ? t("attach.successCreated") : t("attach.successExisting"),
                   );
                   setCredential("");
                 },

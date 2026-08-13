@@ -6,9 +6,7 @@ import type { JwtPayload } from "@/lib/jwt";
 
 export type SessionRole = "platform_admin" | "tenant_admin" | "unknown";
 
-export function normalizeSessionRole(
-  role: string | null | undefined,
-): SessionRole {
+export function normalizeSessionRole(role: string | null | undefined): SessionRole {
   if (typeof role !== "string") return "unknown";
   const normalized = role.trim().toLowerCase();
   if (normalized === "platform_admin") return "platform_admin";
@@ -16,17 +14,11 @@ export function normalizeSessionRole(
   return "unknown";
 }
 
-export function sessionRoleFromPayload(
-  payload: JwtPayload | null | undefined,
-): SessionRole {
-  return normalizeSessionRole(
-    typeof payload?.role === "string" ? payload.role : null,
-  );
+export function sessionRoleFromPayload(payload: JwtPayload | null | undefined): SessionRole {
+  return normalizeSessionRole(typeof payload?.role === "string" ? payload.role : null);
 }
 
-export function isPlatformAdmin(
-  payload: JwtPayload | null | undefined,
-): boolean {
+export function isPlatformAdmin(payload: JwtPayload | null | undefined): boolean {
   return sessionRoleFromPayload(payload) === "platform_admin";
 }
 

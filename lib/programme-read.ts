@@ -38,9 +38,7 @@ export interface ProgrammeClient {
   repoCatalogue: CatalogueCandidateClient[];
 }
 
-export function mapCatalogueCandidate(
-  raw: UpstreamCatalogueCandidate,
-): CatalogueCandidateClient {
+export function mapCatalogueCandidate(raw: UpstreamCatalogueCandidate): CatalogueCandidateClient {
   return {
     org: raw.org,
     repo: raw.repo,

@@ -34,7 +34,7 @@ Live smoke against **real gateflow**. Unit ownership:
    are visible without secrets (REQ-34). Catalogue is informational — not fleet
    membership. Empty catalogue is allowed for programmes created before gateflow
    catalogue persistence.
-5b. Click **Refresh catalogue** (REQ-37): candidates update from meta (or a named
+   5b. Click **Refresh catalogue** (REQ-37): candidates update from meta (or a named
    failure is shown). No Fleet connect required.
 6. Attach a **tenant_admin** with a new `credential_identifier` + password
    (REQ-35).
