@@ -13,6 +13,6 @@ changes.** Verification rows must match `tests/README.md`.
 | INIT-GATEFLOW-016 CAP-P platform programmes + attach        | 🔧 implemented    | Create body: no `workspace_root` / `meta_ref`; unit `platform-programmes.test.ts`; live `verify/03`; gateflow auto-connect ask = Q-4                  |
 | INIT-GATEFLOW-016 W1 CAP-C wave operations                  | ✅ human_approved | unit `run-stop-presentation.test.ts`; live `tests/verify/03-w1-wave-operations.md`; ground `Ground-Report-INIT-GATEFLOW-016-W1.md`                    |
 | INIT-GATEFLOW-016 W2 CAP-F initiative tracking              | ✅ human_approved | unit `initiative-composition.test.ts`; live `tests/verify/04-w2-initiative-tracking.md`; ground `Ground-Report-INIT-GATEFLOW-016-W2.md`               |
-| INIT-GATEFLOW-016 W3 CAP-G metrics & efficacy               | 🔧 implemented    | unit `metrics-empty.test.ts`; live `tests/verify/05-w3-metrics-efficacy.md` (human at wave-acceptance)                                                |
+| INIT-GATEFLOW-016 W3 CAP-G metrics & efficacy               | ✅ human_approved | unit `metrics-empty.test.ts`; live `tests/verify/05-w3-metrics-efficacy.md`; ground `Ground-Report-INIT-GATEFLOW-016-W3.md`                           |
 
 _Product wave W4 not started — see initiative as-built detail._
