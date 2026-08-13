@@ -12,14 +12,14 @@ export const WORKSPACE_NAV: WorkspaceNavItem[] = [
   { href: "/programmes", labelKey: "nav.programmes", roles: ["platform_admin"] },
   { href: "/tenant", labelKey: "nav.tenant", roles: ["tenant_admin"] },
   { href: "/fleet", labelKey: "nav.fleet", roles: ["tenant_admin"] },
+  { href: "/runs", labelKey: "nav.runs", roles: ["tenant_admin"] },
 ];
 
 export function navItemsForRole(
   role: string | null | undefined,
   items: WorkspaceNavItem[] = WORKSPACE_NAV,
 ): WorkspaceNavItem[] {
-  const normalized =
-    typeof role === "string" ? role.trim().toLowerCase() : "";
+  const normalized = typeof role === "string" ? role.trim().toLowerCase() : "";
   return items.filter((item) => {
     if (!item.roles || item.roles.length === 0) return true;
     return item.roles.includes(normalized as "platform_admin" | "tenant_admin");

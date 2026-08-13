@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { navItemsForRole, WORKSPACE_NAV } from "@/lib/workspace-nav";
-import {
-  isPlatformAdmin,
-  isTenantAdmin,
-  normalizeSessionRole,
-} from "@/lib/session-role";
+import { isPlatformAdmin, isTenantAdmin, normalizeSessionRole } from "@/lib/session-role";
 import { stripAttachAccessToken } from "@/lib/programme-attach";
 import { mapProgrammeReadModel } from "@/lib/programme-read";
 
@@ -31,9 +27,9 @@ describe("navItemsForRole", () => {
     expect(hrefs).toEqual(["/", "/programmes"]);
   });
 
-  it("shows Status + Tenant + Fleet for tenant_admin", () => {
+  it("shows Status + Tenant + Fleet + Runs for tenant_admin", () => {
     const hrefs = navItemsForRole("tenant_admin").map((i) => i.href);
-    expect(hrefs).toEqual(["/", "/tenant", "/fleet"]);
+    expect(hrefs).toEqual(["/", "/tenant", "/fleet", "/runs"]);
   });
 
   it("shows only unscoped items for unknown role", () => {
@@ -48,6 +44,7 @@ describe("navItemsForRole", () => {
       "/programmes",
       "/tenant",
       "/fleet",
+      "/runs",
     ]);
   });
 });

@@ -69,9 +69,7 @@ export function useProgramme(programmeId: string, options?: { enabled?: boolean 
   const query = useQuery({
     queryKey: ["gateflow", "programmes", programmeId],
     queryFn: async () => {
-      const res = await authFetch(
-        `/api/gateflow/programmes/${encodeURIComponent(programmeId)}`,
-      );
+      const res = await authFetch(`/api/gateflow/programmes/${encodeURIComponent(programmeId)}`);
       if (!res.ok) throw await readError(res, "programmes.errors.loadFailed");
       return res.json() as Promise<ProgrammeSummary>;
     },

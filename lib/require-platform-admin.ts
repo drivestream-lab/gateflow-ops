@@ -9,9 +9,7 @@ export interface PlatformAdminSession {
 }
 
 /** Require httpOnly session + platform_admin role for CAP-P BFF routes. */
-export async function requirePlatformAdminSession(): Promise<
-  PlatformAdminSession | Response
-> {
+export async function requirePlatformAdminSession(): Promise<PlatformAdminSession | Response> {
   const token = await getSessionToken();
   if (!token) return bffError(401, "auth.errors.sessionExpired");
   const payload = decodeJwtPayload(token);

@@ -238,9 +238,7 @@ export function OnboardingFlow() {
               type="button"
               variant="outline"
               disabled={connect.isPending}
-              onClick={() =>
-                connect.mutate({ org: connection.org, repo: connection.repo })
-              }
+              onClick={() => connect.mutate({ org: connection.org, repo: connection.repo })}
             >
               {tf("connection.resync")}
             </Button>

@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { logRequestStart, logRequestSuccess, logRequestError } from "@/lib/bff-logging";
 import { createApiLogger } from "@/lib/logging";
-import {
-  mapProgrammeReadModel,
-  type UpstreamProgrammeReadModel,
-} from "@/lib/programme-read";
+import { mapProgrammeReadModel, type UpstreamProgrammeReadModel } from "@/lib/programme-read";
 import { requirePlatformAdminSession } from "@/lib/require-platform-admin";
 import { upstreamFetch } from "@/lib/upstream-fetch";
 
