@@ -2,14 +2,14 @@
 
 Initiative detail. Index row lives in `implementation-status.md`.
 
-| Wave  | Capability                                                                                            | Status                              | Verification                                                                                                                                      |
-| ----- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W0    | CAP-A tenant detail + invite; CAP-B fleet connect/catalogue/admit + pass/fail verdict; WorkspaceShell | ✅ human_approved (wave-acceptance) | unit: `tests/unit/onboarding-verdict.test.ts`; live: `tests/verify/02-w0-identity-onboarding.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W0.md` |
-| CAP-P | Platform programmes list/create/detail + tenant_admin attach; role-filtered nav (REQ-32–37)           | 🔧 implemented (backfill)           | unit: `tests/unit/platform-programmes.test.ts`; live: `tests/verify/03-platform-programme-onboard.md`                                             |
-| W1    | CAP-C wave operations (start lanes, runs cockpit, forge authorize)                                    | ✅ human_approved (wave-acceptance) | unit: `tests/unit/run-stop-presentation.test.ts`; live: `tests/verify/03-w1-wave-operations.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W1.md`  |
-| W2    | CAP-F initiative tracking                                                                             | ⏳ not started                      | —                                                                                                                                                 |
-| W3    | CAP-G metrics                                                                                         | ⏳ not started                      | —                                                                                                                                                 |
-| W4    | CAP-D/E checkpoints + board                                                                           | ⏳ not started                      | —                                                                                                                                                 |
+| Wave  | Capability                                                                                            | Status                              | Verification                                                                                                                                          |
+| ----- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| W0    | CAP-A tenant detail + invite; CAP-B fleet connect/catalogue/admit + pass/fail verdict; WorkspaceShell | ✅ human_approved (wave-acceptance) | unit: `tests/unit/onboarding-verdict.test.ts`; live: `tests/verify/02-w0-identity-onboarding.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W0.md`     |
+| CAP-P | Platform programmes list/create/detail + tenant_admin attach; role-filtered nav (REQ-32–37)           | 🔧 implemented (backfill)           | unit: `tests/unit/platform-programmes.test.ts`; live: `tests/verify/03-platform-programme-onboard.md`                                                 |
+| W1    | CAP-C wave operations (start lanes, runs cockpit, forge authorize)                                    | ✅ human_approved (wave-acceptance) | unit: `tests/unit/run-stop-presentation.test.ts`; live: `tests/verify/03-w1-wave-operations.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W1.md`      |
+| W2    | CAP-F initiative tracking                                                                             | ✅ human_approved (wave-acceptance) | unit: `tests/unit/initiative-composition.test.ts`; live: `tests/verify/04-w2-initiative-tracking.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W2.md` |
+| W3    | CAP-G metrics                                                                                         | ⏳ not started                      | —                                                                                                                                                     |
+| W4    | CAP-D/E checkpoints + board                                                                           | ⏳ not started                      | —                                                                                                                                                     |
 
 ## W0 notes
 
@@ -39,3 +39,13 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - Forge authorize only when STOPPED + workflow node; explicit operator action
 - Not on Fleet page (admit ≠ wave start)
 - Live: `tests/verify/03-w1-wave-operations.md` (human at wave-acceptance)
+
+## W2 notes (CAP-F)
+
+- BFF: `app/api/gateflow/initiatives` (list + `?op=closure-start`), `initiatives/by-id` (`?op=` detail/waves/spec/implementation/closeout/merge/completion/closure)
+- UI: `/initiatives` — `components/initiatives/initiative-hub.tsx`; nav `tenant_admin` → Initiatives
+- Composition displayed as-is; gaps labeled empty/unavailable (no invented board/GitHub fields)
+- Closure start surfaces accepted enqueue (202) with run id
+- Optional deep-link to `/runs`; not folded into Fleet or Runs cockpit
+- Live: `tests/verify/04-w2-initiative-tracking.md` (human at wave-acceptance)
+- Ground contracts for W3: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W2.md` §Contracts produced
