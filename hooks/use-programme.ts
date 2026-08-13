@@ -105,11 +105,11 @@ export function useProgrammeCatalogue(options?: { enabled?: boolean }) {
 export function useConnectProgramme() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: (body: { org: string; repo: string; ref?: string }) =>
+    mutationFn: (body: { org: string; repo: string }) =>
       programmeFetch<{ connection: ProgrammeConnection }>("connect", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ org: body.org, repo: body.repo }),
       }),
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ["gateflow", "programme"] });
@@ -121,7 +121,10 @@ export function useRefreshCatalogue() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: () =>
-      programmeFetch<{ connection: ProgrammeConnection }>("catalogue-refresh", {
+      programmeFetch<{
+        connection: ProgrammeConnection;
+        repo_catalogue?: unknown[];
+      }>("catalogue-refresh", {
         method: "POST",
       }),
     onSuccess: () => {

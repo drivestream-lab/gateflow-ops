@@ -8,7 +8,11 @@ export function LogoutButton({ label }: { label: string }) {
     router.push("/login");
   }
   return (
-    <button onClick={onClick} className="text-sm text-brand hover:underline">
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-sm font-medium text-accent underline-offset-4 hover:underline"
+    >
       {label}
     </button>
   );

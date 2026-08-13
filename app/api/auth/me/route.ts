@@ -11,6 +11,7 @@ export async function GET() {
     sub: session.sub,
     email: session.email,
     tenantId: session.tenant_id,
+    role: session.role,
     expiresAt: session.exp,
   });
 }

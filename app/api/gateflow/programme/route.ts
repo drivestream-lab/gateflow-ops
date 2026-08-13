@@ -71,10 +71,14 @@ async function handle(request: NextRequest, method: string) {
     } else if (method === "PUT" && op === "connect") {
       const body = await readJsonBody(request);
       if (!body || typeof body !== "object") return bffError(400, "common.errors.badRequest");
+      const connectBody = body as { org?: unknown; repo?: unknown };
+      const org = typeof connectBody.org === "string" ? connectBody.org.trim() : "";
+      const repo = typeof connectBody.repo === "string" ? connectBody.repo.trim() : "";
+      if (!org || !repo) return bffError(400, "common.errors.badRequest");
       upstream = await upstreamFetch(`${basePath(tenantId)}/connect`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ org, repo }),
         correlationId,
       });
     } else if (method === "POST" && op === "catalogue-refresh") {

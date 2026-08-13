@@ -5,13 +5,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: t("common.app.title"),
-  description: "Gateflow operations console — runs, waves, and delivery status",
+  description: t("common.app.description"),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-surface-muted text-ink antialiased">
+      <body className="bg-background text-foreground antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

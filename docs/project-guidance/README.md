@@ -8,3 +8,4 @@ how this portal should look and behave. Seed as the first real screens land.
 | ------------------------------------------------------ | ------------------------------------------------------------------------ |
 | [component-development.md](./component-development.md) | Primitives, features, pages (shadcn + CVA)                               |
 | [workspace-layout.md](./workspace-layout.md)           | Authenticated shell: left nav, page header, body, optional context panel |
+| [branding.md](./branding.md)                           | Product mark + color token SSOT (values; ADR-001 is mechanism)           |
