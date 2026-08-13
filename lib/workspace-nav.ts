@@ -13,6 +13,7 @@ export const WORKSPACE_NAV: WorkspaceNavItem[] = [
   { href: "/tenant", labelKey: "nav.tenant", roles: ["tenant_admin"] },
   { href: "/fleet", labelKey: "nav.fleet", roles: ["tenant_admin"] },
   { href: "/runs", labelKey: "nav.runs", roles: ["tenant_admin"] },
+  { href: "/initiatives", labelKey: "nav.initiatives", roles: ["tenant_admin"] },
 ];
 
 export function navItemsForRole(
