@@ -5,6 +5,7 @@
   "nav.fleet": "Fleet",
   "nav.runs": "Runs",
   "nav.initiatives": "Initiatives",
+  "nav.metrics": "Metrics",
   "chrome.signedIn": "Signed in",
   "chrome.menu": "Open navigation",
   "chrome.primaryNav": "Primary navigation"
