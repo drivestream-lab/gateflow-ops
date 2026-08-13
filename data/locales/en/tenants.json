@@ -14,5 +14,6 @@
   "errors.loadFailed": "Could not load tenant detail.",
   "errors.inviteFailed": "Invite failed.",
   "errors.missingTenant": "No tenant is bound to this session.",
+  "errors.wrongRole": "Tenant operations require a tenant admin session. Platform admins manage programmes instead.",
   "loading": "Loading tenant…"
 }

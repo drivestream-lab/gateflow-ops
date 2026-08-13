@@ -1,12 +1,16 @@
 {
   "status.title": "System status",
-  "status.welcome": "Welcome",
-  "status.signedInAs": "Signed in as",
+  "status.description": "Session and upstream connectivity for this operator.",
+  "status.operator": "Operator",
+  "status.role": "Role",
+  "status.tenant": "Tenant",
   "status.session": "Session",
+  "status.sessionKind": "jwt",
   "status.sessionExpires": "expires",
   "status.upstream": "Upstream API",
   "status.upstreamConnected": "connected",
   "status.upstreamUnreachable": "unreachable — check UPSTREAM_BASE_URL and that the upstream is running",
   "status.locale": "Locale",
-  "status.chassisNote": "This page is the living exemplar: server component, session read, upstream round-trip through the BFF, design tokens, i18n. Copy its shape for real features."
+  "status.localeValue": "en",
+  "status.valueMissing": "—"
 }

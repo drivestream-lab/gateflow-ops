@@ -4,15 +4,29 @@ Initiative detail. Index row lives in `implementation-status.md`.
 
 | Wave | Capability                                                                                   | Status                              | Verification                                                                                                                                      |
 | ---- | -------------------------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| W0   | CAP-A tenant detail + invite; CAP-B programme onboarding + pass/fail verdict; WorkspaceShell | ✅ human_approved (wave-acceptance) | unit: `tests/unit/onboarding-verdict.test.ts`; live: `tests/verify/02-w0-identity-onboarding.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W0.md` |
-| W1   | CAP-C wave operations                                                                        | ⏳ not started                      | —                                                                                                                                                 |
+| W0   | CAP-A tenant detail + invite; CAP-B fleet connect/catalogue/admit + pass/fail verdict; WorkspaceShell | ✅ human_approved (wave-acceptance) | unit: `tests/unit/onboarding-verdict.test.ts`; live: `tests/verify/02-w0-identity-onboarding.md`; ground: `Ground-Report-INIT-GATEFLOW-016-W0.md` |
+| CAP-P | Platform programmes list/create/detail + tenant_admin attach; role-filtered nav (REQ-32–37) | 🔧 implemented (backfill)           | unit: `tests/unit/platform-programmes.test.ts`; live: `tests/verify/03-platform-programme-onboard.md` |
+| W1   | CAP-C wave operations (not folded into Fleet admit)                                          | ⏳ not started                      | —                                                                                                                                                 |
 | W2   | CAP-F initiative tracking                                                                    | ⏳ not started                      | —                                                                                                                                                 |
 | W3   | CAP-G metrics                                                                                | ⏳ not started                      | —                                                                                                                                                 |
 | W4   | CAP-D/E checkpoints + board                                                                  | ⏳ not started                      | —                                                                                                                                                 |
 
 ## W0 notes
 
-- BFF: `app/api/gateflow/tenants`, `tenants/users`, `programme?op=…`
-- Pure verdict: `lib/onboarding-verdict.ts` → pass\|fail only
+- BFF: `app/api/gateflow/tenants`, `tenants/users`, `programme?op=…` (connect forwards `org`/`repo` only — no `ref`)
+- Fleet UI: active fleet → catalogue admit → meta connect/re-sync; admit ≠ wave start
+- Pure verdict: `lib/onboarding-verdict.ts` → pass\|fail fleet onboard only
 - Shell: `components/workspace/*` via `app/(dashboard)/layout.tsx`
 - Ground contracts for W1: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W0.md` §Contracts produced
+- Dependency: gateflow auto-connect on programme create = product Q-4 (manual connect until then)
+
+## CAP-P notes (platform programme backfill)
+
+- BFF: `app/api/gateflow/programmes` (+ `[programmeId]`, `tenant-admins`, `catalogue/refresh`)
+- Create body aligned with gateflow: `name`, `meta_org`, `meta_repo`, `github_pat` only — **no** `workspace_root` or `meta_ref`
+- Detail/list display read-model `workspaceRoot` and informational `repoCatalogue` (gateflow REQ-48); may show `metaRef` if upstream returns it
+- Platform catalogue refresh: `POST …/programmes/{id}/catalogue/refresh` (REQ-37 / gateflow REQ-49)
+- Attach responses strip `access_token` via `lib/programme-attach.ts`
+- Nav filtered by JWT role (`lib/workspace-nav.ts` + `lib/session-role.ts`)
+- UI: `/programmes`, `/programmes/new`, `/programmes/[programmeId]`
+- Out of scope still: wipe, lane-defaults, agent-catalogue; auto-connect is gateflow Q-4

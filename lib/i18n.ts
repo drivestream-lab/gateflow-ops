@@ -7,6 +7,7 @@ import system from "@/data/locales/en/system.json";
 import workspace from "@/data/locales/en/workspace.json";
 import tenants from "@/data/locales/en/tenants.json";
 import fleet from "@/data/locales/en/fleet.json";
+import programmes from "@/data/locales/en/programmes.json";
 
 const catalogs: Record<string, Record<string, string>> = {
   common,
@@ -15,6 +16,7 @@ const catalogs: Record<string, Record<string, string>> = {
   workspace,
   tenants,
   fleet,
+  programmes,
 };
 
 export function t(key: string): string {

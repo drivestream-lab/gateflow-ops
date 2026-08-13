@@ -2,17 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { WORKSPACE_NAV } from "@/lib/workspace-nav";
+import { navItemsForRole } from "@/lib/workspace-nav";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
-export function WorkspaceNav() {
+interface WorkspaceNavProps {
+  role?: string | null;
+}
+
+export function WorkspaceNav({ role }: WorkspaceNavProps) {
   const pathname = usePathname();
   const { t } = useTranslation("workspace");
+  const items = navItemsForRole(role);
 
   return (
     <nav className="flex flex-col gap-1 p-3" aria-label={t("chrome.primaryNav")}>
-      {WORKSPACE_NAV.map((item) => {
+      {items.map((item) => {
         const active =
           item.href === "/"
             ? pathname === "/"

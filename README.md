@@ -7,17 +7,17 @@ Gateflow operations console — runs, waves, and delivery status — Next.js BFF
 ```bash
 npm install
 make check && make test     # green immediately
-cp .env.example .env        # defaults point upstream at the built-in dev echo
-npm run dev                 # default port 3000; if it hops, match UPSTREAM_BASE_URL
+cp .env.example .env        # set UPSTREAM_BASE_URL → live gateflow
+npm run dev                 # default port 3000
 ```
 
-Sign in with any email/password (AUTH_MODE=dev-stub). The **System status page**
-is the hello world — a real authenticated page proving session, BFF round-trip,
-design tokens, and i18n in one screen. Full script:
+Sign in with gateflow credentials (`AUTH_MODE=jwt-upstream`). The **System status
+page** is the hello world — session, BFF probe of gateflow `GET /health`, design
+tokens, and i18n in one screen. Full script:
 `tests/verify/01-login-status-page.md`.
 
-**Your first two tasks:** point `UPSTREAM_BASE_URL` at the real upstream, and
-decide `AUTH_MODE` (dev-stub is NOT for production).
+**Configure:** `UPSTREAM_BASE_URL` must reach gateflow; `AUTH_MODE=dev-stub` is
+NOT for production (login only — status always uses `/health`).
 
 ## Layout (nextjs-repository-layout.mdc)
 

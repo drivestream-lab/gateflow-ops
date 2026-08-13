@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import {
   type ReadinessResponse,
   type SelectResult,
 } from "@/hooks/use-programme";
+import { useTenant } from "@/hooks/use-tenant";
 import { composeOnboardingVerdict, type SelectOutcome } from "@/lib/onboarding-verdict";
 import { useTranslation, t } from "@/lib/i18n";
 
@@ -25,6 +26,7 @@ function outcomeLabel(outcome: SelectOutcome): string {
 
 export function OnboardingFlow() {
   const { t: tf } = useTranslation("fleet");
+  const { tenant } = useTenant();
   const connectionQuery = useProgrammeConnection();
   const catalogueQuery = useProgrammeCatalogue({
     enabled: Boolean(connectionQuery.connection),
@@ -37,10 +39,15 @@ export function OnboardingFlow() {
 
   const [org, setOrg] = useState("");
   const [repo, setRepo] = useState("");
-  const [ref, setRef] = useState("");
   const [lastSelect, setLastSelect] = useState<SelectResult | null>(null);
   const [lastReadiness, setLastReadiness] = useState<ReadinessResponse | null>(null);
   const [activeRepos, setActiveRepos] = useState<{ org: string; repo: string }[]>([]);
+
+  useEffect(() => {
+    if (tenant?.repos?.length) {
+      setActiveRepos(tenant.repos);
+    }
+  }, [tenant?.repos]);
 
   const verdict = useMemo(() => {
     if (!lastSelect) return null;
@@ -55,59 +62,66 @@ export function OnboardingFlow() {
     );
   }, [lastSelect, lastReadiness]);
 
+  const connection = connectionQuery.connection;
+
   return (
     <div className="space-y-6">
       <Card>
-        <h2 className="mb-4 font-medium">{tf("connection.title")}</h2>
-        {connectionQuery.connection ? (
-          <dl className="mb-4 grid grid-cols-[10rem_1fr] gap-y-2 text-sm">
-            <dt className="text-muted-foreground">{tf("connection.org")}</dt>
-            <dd>
-              {connectionQuery.connection.org}/{connectionQuery.connection.repo}
-            </dd>
-            <dt className="text-muted-foreground">{tf("connection.lastSynced")}</dt>
-            <dd>{connectionQuery.connection.last_synced_at}</dd>
-          </dl>
+        <h2 className="mb-4 font-medium">{tf("active.title")}</h2>
+        {activeRepos.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{tf("active.empty")}</p>
         ) : (
-          <p className="mb-4 text-sm text-muted-foreground">{tf("connection.missing")}</p>
+          <ul className="divide-y divide-border">
+            {activeRepos.map((r) => (
+              <li
+                key={`${r.org}/${r.repo}`}
+                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
+              >
+                <span>
+                  {r.org}/{r.repo}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={refreshReadiness.isPending}
+                    onClick={() => {
+                      setLastSelect({
+                        org: r.org,
+                        repo: r.repo,
+                        outcome: "already_selected",
+                      });
+                      refreshReadiness.mutate(
+                        { org: r.org, repo: r.repo },
+                        { onSuccess: (ready) => setLastReadiness(ready) },
+                      );
+                    }}
+                  >
+                    {tf("readiness.refresh")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={deselect.isPending}
+                    onClick={() =>
+                      deselect.mutate(
+                        { org: r.org, repo: r.repo },
+                        { onSuccess: (data) => setActiveRepos(data.active_repos) },
+                      )
+                    }
+                  >
+                    {tf("deselect")}
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
-        <form
-          className="grid max-w-xl gap-3 md:grid-cols-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            connect.mutate(
-              { org: org.trim(), repo: repo.trim(), ref: ref.trim() || undefined },
-              {
-                onSuccess: () => {
-                  setOrg("");
-                  setRepo("");
-                  setRef("");
-                },
-              },
-            );
-          }}
-        >
-          <div className="space-y-1">
-            <Label htmlFor="meta-org">{tf("connection.org")}</Label>
-            <Input id="meta-org" value={org} onChange={(e) => setOrg(e.target.value)} required />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="meta-repo">{tf("connection.repo")}</Label>
-            <Input id="meta-repo" value={repo} onChange={(e) => setRepo(e.target.value)} required />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="meta-ref">{tf("connection.ref")}</Label>
-            <Input id="meta-ref" value={ref} onChange={(e) => setRef(e.target.value)} />
-          </div>
-          <div className="md:col-span-3">
-            <Button type="submit" disabled={connect.isPending}>
-              {tf("connection.submit")}
-            </Button>
-          </div>
-        </form>
-        {connect.error ? (
+        {deselect.error ? (
           <p className="mt-2 text-sm text-danger" role="alert">
-            {connect.error.message}
+            {deselect.error.message}
           </p>
         ) : null}
       </Card>
@@ -119,14 +133,14 @@ export function OnboardingFlow() {
             type="button"
             variant="outline"
             size="sm"
-            disabled={!connectionQuery.connection || refreshCatalogue.isPending}
+            disabled={!connection || refreshCatalogue.isPending}
             onClick={() => refreshCatalogue.mutate()}
           >
             {tf("catalogue.refresh")}
           </Button>
         </div>
-        {!connectionQuery.connection ? (
-          <p className="text-sm text-muted-foreground">{tf("connection.missing")}</p>
+        {!connection ? (
+          <p className="text-sm text-muted-foreground">{tf("catalogue.needsConnection")}</p>
         ) : catalogueQuery.isLoading ? (
           <p className="text-sm text-muted-foreground">{tf("loading")}</p>
         ) : !catalogueQuery.catalogue?.candidates.length ? (
@@ -162,7 +176,7 @@ export function OnboardingFlow() {
                         if (result.outcome === "ok" || result.outcome === "already_selected") {
                           refreshReadiness.mutate(
                             { org: c.org, repo: c.repo },
-                            { onSuccess: (r) => setLastReadiness(r) },
+                            { onSuccess: (ready) => setLastReadiness(ready) },
                           );
                         }
                       },
@@ -204,64 +218,80 @@ export function OnboardingFlow() {
               {t(verdict.reasonKey)}
             </p>
           ) : null}
-          {lastSelect &&
-          (lastSelect.outcome === "ok" || lastSelect.outcome === "already_selected") ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              disabled={refreshReadiness.isPending}
-              onClick={() =>
-                refreshReadiness.mutate(
-                  { org: lastSelect.org, repo: lastSelect.repo },
-                  { onSuccess: (r) => setLastReadiness(r) },
-                )
-              }
-            >
-              {tf("readiness.refresh")}
-            </Button>
-          ) : null}
         </Card>
       )}
 
       <Card>
-        <h2 className="mb-4 font-medium">{tf("active.title")}</h2>
-        {activeRepos.length === 0 && !connectionQuery.connection ? (
-          <p className="text-sm text-muted-foreground">{tf("active.empty")}</p>
-        ) : activeRepos.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{tf("active.empty")}</p>
+        <h2 className="mb-4 font-medium">{tf("connection.title")}</h2>
+        {connection ? (
+          <>
+            <dl className="mb-4 grid grid-cols-[10rem_1fr] gap-y-2 text-sm">
+              <dt className="text-muted-foreground">{tf("connection.org")}</dt>
+              <dd>
+                {connection.org}/{connection.repo}
+              </dd>
+              <dt className="text-muted-foreground">{tf("connection.lastSynced")}</dt>
+              <dd>{connection.last_synced_at}</dd>
+            </dl>
+            <p className="mb-3 text-sm text-muted-foreground">{tf("connection.resyncHint")}</p>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={connect.isPending}
+              onClick={() =>
+                connect.mutate({ org: connection.org, repo: connection.repo })
+              }
+            >
+              {tf("connection.resync")}
+            </Button>
+          </>
         ) : (
-          <ul className="divide-y divide-border">
-            {activeRepos.map((r) => (
-              <li
-                key={`${r.org}/${r.repo}`}
-                className="flex items-center justify-between gap-2 py-3 text-sm"
-              >
-                <span>
-                  {r.org}/{r.repo}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={deselect.isPending}
-                  onClick={() =>
-                    deselect.mutate(
-                      { org: r.org, repo: r.repo },
-                      { onSuccess: (data) => setActiveRepos(data.active_repos) },
-                    )
-                  }
-                >
-                  {tf("deselect")}
+          <>
+            <p className="mb-4 text-sm text-muted-foreground">{tf("connection.missing")}</p>
+            <form
+              className="grid max-w-xl gap-3 md:grid-cols-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                connect.mutate(
+                  { org: org.trim(), repo: repo.trim() },
+                  {
+                    onSuccess: () => {
+                      setOrg("");
+                      setRepo("");
+                    },
+                  },
+                );
+              }}
+            >
+              <div className="space-y-1">
+                <Label htmlFor="meta-org">{tf("connection.org")}</Label>
+                <Input
+                  id="meta-org"
+                  value={org}
+                  onChange={(e) => setOrg(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="meta-repo">{tf("connection.repo")}</Label>
+                <Input
+                  id="meta-repo"
+                  value={repo}
+                  onChange={(e) => setRepo(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Button type="submit" disabled={connect.isPending}>
+                  {tf("connection.submit")}
                 </Button>
-              </li>
-            ))}
-          </ul>
+              </div>
+            </form>
+          </>
         )}
-        {deselect.error ? (
+        {connect.error ? (
           <p className="mt-2 text-sm text-danger" role="alert">
-            {deselect.error.message}
+            {connect.error.message}
           </p>
         ) : null}
       </Card>

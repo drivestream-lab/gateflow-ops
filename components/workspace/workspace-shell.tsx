@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 interface WorkspaceShellProps {
   productTitle: string;
   sessionLabel: string;
+  sessionRole?: string | null;
   logoutSlot: React.ReactNode;
   children: React.ReactNode;
 }
@@ -16,6 +17,7 @@ interface WorkspaceShellProps {
 export function WorkspaceShell({
   productTitle,
   sessionLabel,
+  sessionRole,
   logoutSlot,
   children,
 }: WorkspaceShellProps) {
@@ -34,10 +36,10 @@ export function WorkspaceShell({
           <span className="font-semibold text-accent">{productTitle}</span>
         </div>
         <div className="flex-1 overflow-y-auto">
-          <WorkspaceNav />
+          <WorkspaceNav role={sessionRole} />
         </div>
         <div className="space-y-2 border-t border-border p-4 text-sm text-muted-foreground">
-          <p>
+          <p className="truncate" title={sessionLabel}>
             {t("chrome.signedIn")}: <span className="text-foreground">{sessionLabel}</span>
           </p>
           {logoutSlot}

@@ -4,7 +4,9 @@
 export type JwtPayload = {
   sub?: string;
   email?: string;
+  credential_identifier?: string;
   tenant_id?: string;
+  role?: string;
   exp?: number;
   [k: string]: unknown;
 };

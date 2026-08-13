@@ -8,11 +8,11 @@
    shadcn-compatible: components.json points here; `npx shadcn add <component>`
    generates primitives that consume these variables. */
 @theme {
-  /* 1. Palette */
+  /* 1. Palette — change brand hue here only (see docs/project-guidance/branding.md) */
   --color-brand: #1e40af;
   --color-brand-muted: #dbeafe;
 
-  /* 2. Semantic — component-facing */
+  /* 2. Semantic — JSX MUST use these via utilities (bg-accent, text-foreground, …) */
   --color-background: #f8fafc;
   --color-foreground: #0f172a;
   --color-surface: #ffffff;
@@ -31,7 +31,7 @@
   --color-warn: #b45309;
   --color-danger: #b91c1c;
 
-  /* Back-compat aliases used by chassis pages */
+  /* Deprecated aliases — prefer semantic names in new JSX */
   --color-ink: var(--color-foreground);
   --color-ink-muted: var(--color-muted-foreground);
   --color-surface-muted: var(--color-background);
