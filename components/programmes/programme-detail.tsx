@@ -1,16 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  useAttachTenantAdmin,
-  useProgramme,
-  useRefreshProgrammeCatalogue,
-} from "@/hooks/use-programmes";
+import { MembershipPanel } from "@/components/grants/membership-panel";
+import { useProgramme, useRefreshProgrammeCatalogue } from "@/hooks/use-programmes";
 import { useTranslation } from "@/lib/i18n";
 
 interface ProgrammeDetailProps {
@@ -20,12 +14,7 @@ interface ProgrammeDetailProps {
 export function ProgrammeDetail({ programmeId }: ProgrammeDetailProps) {
   const { t } = useTranslation("programmes");
   const { programme, isLoading, error } = useProgramme(programmeId);
-  const attach = useAttachTenantAdmin(programmeId);
   const refreshCatalogue = useRefreshProgrammeCatalogue(programmeId);
-  const [credential, setCredential] = useState("");
-  const [password, setPassword] = useState("");
-  const [attachMessage, setAttachMessage] = useState<string | null>(null);
-  const [lastUserId, setLastUserId] = useState<string | null>(null);
 
   if (isLoading) {
     return <p className="text-sm text-muted-foreground">{t("loading")}</p>;
@@ -113,74 +102,7 @@ export function ProgrammeDetail({ programmeId }: ProgrammeDetailProps) {
         )}
       </Card>
 
-      <Card>
-        <h2 className="mb-1 font-medium">{t("attach.title")}</h2>
-        <p className="mb-4 text-sm text-muted-foreground">{t("attach.description")}</p>
-        <form
-          className="grid max-w-md gap-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setAttachMessage(null);
-            setLastUserId(null);
-            attach.mutate(
-              {
-                credential_identifier: credential.trim(),
-                password,
-              },
-              {
-                onSuccess: (result) => {
-                  setPassword("");
-                  setLastUserId(result.userId);
-                  setAttachMessage(
-                    result.created ? t("attach.successCreated") : t("attach.successExisting"),
-                  );
-                  setCredential("");
-                },
-              },
-            );
-          }}
-        >
-          <div className="space-y-1">
-            <Label htmlFor="attach-credential">{t("attach.credential")}</Label>
-            <Input
-              id="attach-credential"
-              value={credential}
-              onChange={(e) => setCredential(e.target.value)}
-              required
-              autoComplete="username"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="attach-password">{t("attach.password")}</Label>
-            <Input
-              id="attach-password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-            />
-          </div>
-          <Button type="submit" disabled={attach.isPending}>
-            {t("attach.submit")}
-          </Button>
-          {attachMessage ? (
-            <div className="space-y-1 text-sm text-ok">
-              <p>{attachMessage}</p>
-              {lastUserId ? (
-                <p className="font-mono text-xs text-muted-foreground">
-                  {t("attach.resultUserId")}: {lastUserId}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
-          {attach.error ? (
-            <p className="text-sm text-danger" role="alert">
-              {attach.error.message}
-            </p>
-          ) : null}
-        </form>
-      </Card>
+      <MembershipPanel programmeId={programmeId} />
     </div>
   );
 }

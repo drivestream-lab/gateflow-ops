@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authFetch } from "@/lib/auth-fetch";
 import { t } from "@/lib/i18n";
-import type { AttachTenantAdminClientResponse } from "@/lib/programme-attach";
 
 export interface CatalogueCandidate {
   org: string;
@@ -102,23 +101,6 @@ export function useCreateProgramme() {
     },
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ["gateflow", "programmes"] });
-    },
-  });
-}
-
-export function useAttachTenantAdmin(programmeId: string) {
-  return useMutation({
-    mutationFn: async (body: { credential_identifier: string; password: string }) => {
-      const res = await authFetch(
-        `/api/gateflow/programmes/${encodeURIComponent(programmeId)}/tenant-admins`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(body),
-        },
-      );
-      if (!res.ok) throw await readError(res, "programmes.errors.attachFailed");
-      return res.json() as Promise<AttachTenantAdminClientResponse>;
     },
   });
 }

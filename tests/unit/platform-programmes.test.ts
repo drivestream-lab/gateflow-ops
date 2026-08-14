@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { navItemsForRole, WORKSPACE_NAV } from "@/lib/workspace-nav";
 import { isPlatformAdmin, isTenantAdmin, normalizeSessionRole } from "@/lib/session-role";
-import { stripAttachAccessToken } from "@/lib/programme-attach";
 import { mapProgrammeReadModel } from "@/lib/programme-read";
 
 describe("session-role", () => {
@@ -60,26 +59,6 @@ describe("navItemsForRole", () => {
       "/checkpoints",
       "/board",
     ]);
-  });
-});
-
-describe("stripAttachAccessToken", () => {
-  it("removes access_token and camelCases ids", () => {
-    const safe = stripAttachAccessToken({
-      user_id: "u-1",
-      tenant_id: "t-1",
-      programme_id: "p-1",
-      access_token: "secret.jwt.token",
-      created: true,
-    });
-    expect(safe).toEqual({
-      userId: "u-1",
-      tenantId: "t-1",
-      programmeId: "p-1",
-      created: true,
-    });
-    expect("access_token" in safe).toBe(false);
-    expect(JSON.stringify(safe)).not.toContain("secret.jwt.token");
   });
 });
 
