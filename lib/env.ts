@@ -15,6 +15,8 @@ export const env = {
   /** dev-stub | jwt-upstream — see lib/auth.ts */
   AUTH_MODE: process.env.AUTH_MODE ?? "dev-stub",
   SESSION_COOKIE: process.env.SESSION_COOKIE ?? "portal_session",
+  /** httpOnly store for entered programme/tenant ids (ADR-002). Not a Bearer. */
+  PROGRAMME_CONTEXT_COOKIE: process.env.PROGRAMME_CONTEXT_COOKIE ?? "portal_programme_context",
   LOG_LEVEL: process.env.LOG_LEVEL ?? "info",
   LOG_PRETTY: process.env.LOG_PRETTY === "true",
   LOG_UPSTREAM_CALLS: process.env.LOG_UPSTREAM_CALLS !== "false",

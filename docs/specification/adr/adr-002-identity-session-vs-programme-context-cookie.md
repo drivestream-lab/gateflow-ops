@@ -1,22 +1,22 @@
 # ADR-002 — Identity session cookie vs entered-programme context cookie
 
-| Field | Value |
-|-------|-------|
-| Status | Accepted |
-| Initiative | INIT-GATEFLOW-017 |
-| Feasibility finding | FF-01 (`ALTERNATIVE: identity-scoped httpOnly session plus separate entered-programme authorization context vs reminting a programme-bound upstream JWT into the session cookie on programme enter`) |
-| Technical review | `docs/specification/reports/Technical-Review-INIT-GATEFLOW-017.md` |
-| Source spec | `docs/specification/product/INIT-GATEFLOW-017-gateflow-ops.md` |
-| Source spec digest | `sha256:993f2d32f3c3f5bbddb7c00b419aa6eb069b88ea060d6144bc84c9634f99ea60` |
-| product_constraints | `[REQ-12, REQ-14, REQ-16, REQ-17, REQ-18]` |
-| changes_user_visible_behavior | `false` |
-| spec_amendment_required | `false` |
-| supersedes | none |
-| superseded_by | none |
-| Decision owner | @nikd10x |
-| Approval evidence | https://github.com/drivestream-lab/gateflow-ops/pull/32#issuecomment-5290307320 |
-| Approved head | ae5e43115fa4090fcf487940bb99756709db9f95 |
-| Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:501e402009b86244f70aef08f405b11a4f706979e223f7b7a1b977990c46a499 |
+| Field                         | Value                                                                                                                                                                                                |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Status                        | Accepted                                                                                                                                                                                             |
+| Initiative                    | INIT-GATEFLOW-017                                                                                                                                                                                    |
+| Feasibility finding           | FF-01 (`ALTERNATIVE: identity-scoped httpOnly session plus separate entered-programme authorization context vs reminting a programme-bound upstream JWT into the session cookie on programme enter`) |
+| Technical review              | `docs/specification/reports/Technical-Review-INIT-GATEFLOW-017.md`                                                                                                                                   |
+| Source spec                   | `docs/specification/product/INIT-GATEFLOW-017-gateflow-ops.md`                                                                                                                                       |
+| Source spec digest            | `sha256:993f2d32f3c3f5bbddb7c00b419aa6eb069b88ea060d6144bc84c9634f99ea60`                                                                                                                            |
+| product_constraints           | `[REQ-12, REQ-14, REQ-16, REQ-17, REQ-18]`                                                                                                                                                           |
+| changes_user_visible_behavior | `false`                                                                                                                                                                                              |
+| spec_amendment_required       | `false`                                                                                                                                                                                              |
+| supersedes                    | none                                                                                                                                                                                                 |
+| superseded_by                 | none                                                                                                                                                                                                 |
+| Decision owner                | @nikd10x                                                                                                                                                                                             |
+| Approval evidence             | https://github.com/drivestream-lab/gateflow-ops/pull/32#issuecomment-5290307320                                                                                                                      |
+| Approved head                 | ae5e43115fa4090fcf487940bb99756709db9f95                                                                                                                                                             |
+| Lint evidence                 | adr_boundary_lint.py 2/2, PASS, sha256:501e402009b86244f70aef08f405b11a4f706979e223f7b7a1b977990c46a499                                                                                              |
 
 > If `changes_user_visible_behavior` or `spec_amendment_required` would be
 > `true`, **stop**: amend and re-approve the product spec before this ADR may
@@ -48,11 +48,11 @@ programme or tenant identifiers.
 
 Grounded on the single-cookie chassis. No dormant second cookie exists.
 
-| Option | Benefits | Costs / risks |
-|--------|----------|---------------|
-| A — Overwrite `SESSION_COOKIE` with a newly minted JWT that embeds programme/tenant claims | Existing `tenant_id` reads keep working | Overwrites identity claims; another mint per context write; lifetime couples to those claims |
-| B — Keep the identity token on `SESSION_COOKIE`; second httpOnly cookie for programme/tenant ids; server helper | Bearer unchanged on context overwrite; helper `null` if that cookie is absent; one seam | Every `session.tenant_id` site moves to the helper |
-| C — JS-readable store or client-supplied id on each fetch | None | Foreclosed by MDC (`localStorage`) and RSC cookie reads |
+| Option                                                                                                          | Benefits                                                                                | Costs / risks                                                                                |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| A — Overwrite `SESSION_COOKIE` with a newly minted JWT that embeds programme/tenant claims                      | Existing `tenant_id` reads keep working                                                 | Overwrites identity claims; another mint per context write; lifetime couples to those claims |
+| B — Keep the identity token on `SESSION_COOKIE`; second httpOnly cookie for programme/tenant ids; server helper | Bearer unchanged on context overwrite; helper `null` if that cookie is absent; one seam | Every `session.tenant_id` site moves to the helper                                           |
+| C — JS-readable store or client-supplied id on each fetch                                                       | None                                                                                    | Foreclosed by MDC (`localStorage`) and RSC cookie reads                                      |
 
 ## Recommendation
 

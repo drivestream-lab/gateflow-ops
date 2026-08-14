@@ -1,13 +1,13 @@
 ## Pre-implement — gateflow-ops / W0 — Programme-context chassis
 
-| Field | Value |
-|-------|-------|
-| Artifact | `docs/specification/reports/Pre-Implement-INIT-GATEFLOW-017-W0.md` |
-| Initiative | INIT-GATEFLOW-017 |
-| Wave | W0 |
-| Date | 2026-08-14 |
-| Outcome | `pass` |
-| Outcome reason | Spec merged with `spec-lgtm`, board W0 seeded under EPIC, WorkManifest contract pass, PE sign-off complete, P15 live verify path resolved, commands resolved |
+| Field             | Value                                                                                                                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Artifact          | `docs/specification/reports/Pre-Implement-INIT-GATEFLOW-017-W0.md`                                                                                                                                                           |
+| Initiative        | INIT-GATEFLOW-017                                                                                                                                                                                                            |
+| Wave              | W0                                                                                                                                                                                                                           |
+| Date              | 2026-08-14                                                                                                                                                                                                                   |
+| Outcome           | `pass`                                                                                                                                                                                                                       |
+| Outcome reason    | Spec merged with `spec-lgtm`, board W0 seeded under EPIC, WorkManifest contract pass, PE sign-off complete, P15 live verify path resolved, commands resolved                                                                 |
 | Wave head context | Bound by Forge/human context: `develop` @ `a65ae5835f2f2d884698db0dff24ab592c1a1ff5` — not opened by this skill; coding should cut `feature/INIT-GATEFLOW-017-w0-programme-context` from develop before `/loop-spec` publish |
 
 ---
@@ -18,25 +18,25 @@
 > Board / branch / PR checks are **read-only**. Do not create tickets or open
 > a branch from this skill — emit Forge readiness instead.
 
-| Item | Required | Status |
-|------|----------|--------|
-| Branch context (read-only) | Bound head is `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*` | [x] ok — `develop` (not `chore/*-spec-*`) |
-| Spec PR merged | Implementation plan on integration branch | [x] yes — PR #32 MERGED (`a65ae5835f2f2d884698db0dff24ab592c1a1ff5`) |
-| Coding-readiness at merge | Merged spec PR had `spec-lgtm` on head | [x] verified — label on PR #32; `mergeCommit` = develop tip |
-| Board seed (read-only) | Wave issue(s) from plan §9 exist; TASK ids present in wave body | [x] seeded — #34 under EPIC #33; W1–W3 #35–#37 are sub-issues; TASK-W0-01…04 in #34 body |
-| WorkManifest contract | `prayog/v1` §9 passes `scripts/workmanifest_contract.py` | [x] pass |
-| TASK exit proof | Every wave `TASK-*` has `exit.criteria` + `exit.proof` | [x] complete |
-| Live-verification contract | When P15 applies: `verification.live` applicable + script under `live_verify_dir` | [x] contract — `tests/verify/01-login-status-page.md` (extend in TASK-W0-04) |
-| Plan source freshness | all upstream rows `CURRENT` | [x] current |
-| Impact-map repo scope | revision and scope digest match canonical handoff | [x] match — H3 rev `1`; H2 `sha256:13cee9aae41718fd4ad8655d77738042761b0e45db7eefc898a693c42c2fb987`; H1 `sha256:c0fe55040928a13976133edde5cf71f0524815c17c0a8de79173ed3fa0657f67`; G1 `601b00e0a74510a6af1c33bc80ca27260995c094` |
-| `check_command` | resolved | [x] `make check` |
-| `test_command` | resolved | [x] `make test` |
-| `verify_command` | live script under `live_verify_dir` when P15 applies | [x] `tests/verify/01-login-status-page.md` |
-| `ground_command` | resolved or N/A with reason | [x] N/A — no Makefile ground target; `/ground-spec` uses as-built after wave |
-| Co-shipped live verify (P15) | If wave adds/changes product surface: FILE path under `live_verify_dir` listed | [x] `tests/verify/01-login-status-page.md` (login/me/logout surfaces change) |
-| Prior wave as-built row | `human_approved` (from prior `wave-acceptance`) | [x] N/A — W0 first 017 wave |
-| Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [x] N/A — W0 |
-| Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [x] complete — 2026-08-14 ([PR #32 comment](https://github.com/drivestream-lab/gateflow-ops/pull/32#issuecomment-5290307320)) |
+| Item                         | Required                                                                          | Status                                                                                                                                                                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Branch context (read-only)   | Bound head is `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*`    | [x] ok — `develop` (not `chore/*-spec-*`)                                                                                                                                                                                         |
+| Spec PR merged               | Implementation plan on integration branch                                         | [x] yes — PR #32 MERGED (`a65ae5835f2f2d884698db0dff24ab592c1a1ff5`)                                                                                                                                                              |
+| Coding-readiness at merge    | Merged spec PR had `spec-lgtm` on head                                            | [x] verified — label on PR #32; `mergeCommit` = develop tip                                                                                                                                                                       |
+| Board seed (read-only)       | Wave issue(s) from plan §9 exist; TASK ids present in wave body                   | [x] seeded — #34 under EPIC #33; W1–W3 #35–#37 are sub-issues; TASK-W0-01…04 in #34 body                                                                                                                                          |
+| WorkManifest contract        | `prayog/v1` §9 passes `scripts/workmanifest_contract.py`                          | [x] pass                                                                                                                                                                                                                          |
+| TASK exit proof              | Every wave `TASK-*` has `exit.criteria` + `exit.proof`                            | [x] complete                                                                                                                                                                                                                      |
+| Live-verification contract   | When P15 applies: `verification.live` applicable + script under `live_verify_dir` | [x] contract — `tests/verify/01-login-status-page.md` (extend in TASK-W0-04)                                                                                                                                                      |
+| Plan source freshness        | all upstream rows `CURRENT`                                                       | [x] current                                                                                                                                                                                                                       |
+| Impact-map repo scope        | revision and scope digest match canonical handoff                                 | [x] match — H3 rev `1`; H2 `sha256:13cee9aae41718fd4ad8655d77738042761b0e45db7eefc898a693c42c2fb987`; H1 `sha256:c0fe55040928a13976133edde5cf71f0524815c17c0a8de79173ed3fa0657f67`; G1 `601b00e0a74510a6af1c33bc80ca27260995c094` |
+| `check_command`              | resolved                                                                          | [x] `make check`                                                                                                                                                                                                                  |
+| `test_command`               | resolved                                                                          | [x] `make test`                                                                                                                                                                                                                   |
+| `verify_command`             | live script under `live_verify_dir` when P15 applies                              | [x] `tests/verify/01-login-status-page.md`                                                                                                                                                                                        |
+| `ground_command`             | resolved or N/A with reason                                                       | [x] N/A — no Makefile ground target; `/ground-spec` uses as-built after wave                                                                                                                                                      |
+| Co-shipped live verify (P15) | If wave adds/changes product surface: FILE path under `live_verify_dir` listed    | [x] `tests/verify/01-login-status-page.md` (login/me/logout surfaces change)                                                                                                                                                      |
+| Prior wave as-built row      | `human_approved` (from prior `wave-acceptance`)                                   | [x] N/A — W0 first 017 wave                                                                                                                                                                                                       |
+| Prior Ground Report exists   | `reports/Ground-Report-{SPEC}-W{N-1}.md`                                          | [x] N/A — W0                                                                                                                                                                                                                      |
+| Plan PE sign-off (W0 only)   | Implementation-Plan §0 marked complete                                            | [x] complete — 2026-08-14 ([PR #32 comment](https://github.com/drivestream-lab/gateflow-ops/pull/32#issuecomment-5290307320))                                                                                                     |
 
 **Gate verdict:** PASS
 
@@ -52,18 +52,18 @@
 > located `getSessionToken` and `toUpstreamLoginBody`; confirmed by source
 > read. Graph has no `programme-context` symbol (file absent).
 
-| Assumed contract | Entry point | Input shape | Output shape | Source | Confirmed? |
-|-----------------|-------------|-------------|--------------|--------|------------|
-| Identity session cookie | `POST` `app/api/auth/login/route.ts` | JSON `{ email, password }` | `{ ok: true }` plus httpOnly `SESSION_COOKIE` holding `access_token` | source + ADR-002 | [x] yes — cookie flags: httpOnly, sameSite lax, path `/` |
-| Session token read | `getSessionToken` in `lib/auth.ts` | cookie store | token string or `null` | source | [x] yes — reads `env.SESSION_COOKIE` only |
-| Session payload | `getSession` in `lib/auth.ts` | token | JWT claims or `null` if missing/expired | source | [x] yes — `tenant_id` is optional claim, not entered scope |
-| Bearer to upstream | `upstreamFetch` in `lib/upstream-fetch.ts` | gateflow path + init | upstream response; `Authorization: Bearer` from `getSessionToken()` | source + ADR-002 | [x] yes — identity token is the only Bearer |
-| Logout | `POST` `app/api/auth/logout/route.ts` | none | `{ ok: true }`; deletes `SESSION_COOKIE` | source | [x] yes — does **not** yet delete a programme cookie (W0 adds that) |
-| Me introspection | `GET` `app/api/auth/me/route.ts` | session cookie | `{ sub, email, tenantId, role, expiresAt }` — no raw token | source + TDD §3.1 | [x] yes — `tenantId` today echoes JWT `tenant_id`; W0 must not leak tokens; entered ids stay unset until W3 writes the second cookie |
-| Login body mapper | `toUpstreamLoginBody` in `lib/auth-login-upstream.ts` | `{ email?, password? }` | `{ credential_identifier, password }` or `null` | source + unit | [x] yes — refuses empty identifier/password only; **no** email-shape check yet (W0 TASK-W0-02) |
-| Env cookie name | `env` in `lib/env.ts` | process env | `SESSION_COOKIE` default `portal_session` | source + `.env.example` | [x] yes — no programme-cookie name yet (W0 adds it) |
-| Programme-context helper | `getEnteredProgrammeContext` in `lib/programme-context.ts` | cookie store | `{ programmeId, tenantId }` or `null` | TDD §3.1 + plan | [ ] NO — file absent; TASK-W0-01 creates it |
-| `dev-stub` token | `devStubToken` in `app/api/auth/login/route.ts` | email | unsigned JWT with `tenant_id: "dev"` | source + ADR-002 | [x] yes — W0 must leave `tenant_id` unset so the identity JWT cannot substitute for the helper |
+| Assumed contract         | Entry point                                                | Input shape                | Output shape                                                         | Source                  | Confirmed?                                                                                                                           |
+| ------------------------ | ---------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Identity session cookie  | `POST` `app/api/auth/login/route.ts`                       | JSON `{ email, password }` | `{ ok: true }` plus httpOnly `SESSION_COOKIE` holding `access_token` | source + ADR-002        | [x] yes — cookie flags: httpOnly, sameSite lax, path `/`                                                                             |
+| Session token read       | `getSessionToken` in `lib/auth.ts`                         | cookie store               | token string or `null`                                               | source                  | [x] yes — reads `env.SESSION_COOKIE` only                                                                                            |
+| Session payload          | `getSession` in `lib/auth.ts`                              | token                      | JWT claims or `null` if missing/expired                              | source                  | [x] yes — `tenant_id` is optional claim, not entered scope                                                                           |
+| Bearer to upstream       | `upstreamFetch` in `lib/upstream-fetch.ts`                 | gateflow path + init       | upstream response; `Authorization: Bearer` from `getSessionToken()`  | source + ADR-002        | [x] yes — identity token is the only Bearer                                                                                          |
+| Logout                   | `POST` `app/api/auth/logout/route.ts`                      | none                       | `{ ok: true }`; deletes `SESSION_COOKIE`                             | source                  | [x] yes — does **not** yet delete a programme cookie (W0 adds that)                                                                  |
+| Me introspection         | `GET` `app/api/auth/me/route.ts`                           | session cookie             | `{ sub, email, tenantId, role, expiresAt }` — no raw token           | source + TDD §3.1       | [x] yes — `tenantId` today echoes JWT `tenant_id`; W0 must not leak tokens; entered ids stay unset until W3 writes the second cookie |
+| Login body mapper        | `toUpstreamLoginBody` in `lib/auth-login-upstream.ts`      | `{ email?, password? }`    | `{ credential_identifier, password }` or `null`                      | source + unit           | [x] yes — refuses empty identifier/password only; **no** email-shape check yet (W0 TASK-W0-02)                                       |
+| Env cookie name          | `env` in `lib/env.ts`                                      | process env                | `SESSION_COOKIE` default `portal_session`                            | source + `.env.example` | [x] yes — no programme-cookie name yet (W0 adds it)                                                                                  |
+| Programme-context helper | `getEnteredProgrammeContext` in `lib/programme-context.ts` | cookie store               | `{ programmeId, tenantId }` or `null`                                | TDD §3.1 + plan         | [ ] NO — file absent; TASK-W0-01 creates it                                                                                          |
+| `dev-stub` token         | `devStubToken` in `app/api/auth/login/route.ts`            | email                      | unsigned JWT with `tenant_id: "dev"`                                 | source + ADR-002        | [x] yes — W0 must leave `tenant_id` unset so the identity JWT cannot substitute for the helper                                       |
 
 **Unconfirmed contracts** (prior wave not yet grounded or source not found):
 
@@ -143,12 +143,12 @@
 
 ### Verification plan
 
-| Layer | What it proves | Command (from tests_readme / profile) |
-|-------|----------------|---------------------------------------|
-| Static check | Formatting, linting, types, or equivalent repository checks | `make check` |
-| Unit | Helper null/present/malformed (no I/O); email-shape refuse without upstream | `make test` |
-| Live verify | Malformed email refused; logout clears session + context cookies; `GET /api/auth/me` has no `access_token` | `tests/verify/01-login-status-page.md` — P15 login/me/logout surface change |
-| Ground check | Assigned wave REQs satisfied; boundaries respected | N/A — `/ground-spec` after accept uses as-built |
+| Layer        | What it proves                                                                                             | Command (from tests_readme / profile)                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Static check | Formatting, linting, types, or equivalent repository checks                                                | `make check`                                                                |
+| Unit         | Helper null/present/malformed (no I/O); email-shape refuse without upstream                                | `make test`                                                                 |
+| Live verify  | Malformed email refused; logout clears session + context cookies; `GET /api/auth/me` has no `access_token` | `tests/verify/01-login-status-page.md` — P15 login/me/logout surface change |
+| Ground check | Assigned wave REQs satisfied; boundaries respected                                                         | N/A — `/ground-spec` after accept uses as-built                             |
 
 > P15 applies: live path is mandatory. Agent implements the script extension in `/loop-spec`; does **not** run it as success.
 > Prerequisites (from plan): `npm run dev`; `.env` with `UPSTREAM_BASE_URL`; `AUTH_MODE=jwt-upstream` or documented stub; existing lab login; no new factory identity.
@@ -179,12 +179,12 @@ When checklist PASS and coding is green, the human at checkpoint
 
 ### Checklist publish readiness (on `pass` — fill handoff.forge commit_workspace)
 
-| Field | Value |
-|-------|-------|
-| Workflow outcome | `pass` — W0 gates satisfied |
-| Next | `loop-spec` (`skill`) — `external_action: false` |
+| Field            | Value                                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| Workflow outcome | `pass` — W0 gates satisfied                                                                           |
+| Next             | `loop-spec` (`skill`) — `external_action: false`                                                      |
 | Forge (this hop) | `commit_workspace` **required** — publish `Pre-Implement-INIT-GATEFLOW-017-W0.md` to bound `head_ref` |
-| Later | After `/loop-spec`, `wave-pr-action` opens Draft PR (checklist + code already on tip) |
+| Later            | After `/loop-spec`, `wave-pr-action` opens Draft PR (checklist + code already on tip)                 |
 
 Recommend `/commit-workspace` after explicit authorization. Do not open the PR here.
 
