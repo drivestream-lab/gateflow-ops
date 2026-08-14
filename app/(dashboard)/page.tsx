@@ -5,14 +5,16 @@ import { UpstreamStatus } from "@/components/system/upstream-status";
 import { PageHeader } from "@/components/workspace/page-header";
 import { PageBody } from "@/components/workspace/page-body";
 import { t } from "@/lib/i18n";
-import { sessionDisplayName, sessionRoleLabel, sessionTenantLabel } from "@/lib/session-display";
+import { getEnteredProgrammeContext } from "@/lib/programme-context";
+import { sessionDisplayName, sessionRoleLabel } from "@/lib/session-display";
 
 export default async function SystemStatusPage() {
   const session = await getSession();
+  const entered = await getEnteredProgrammeContext();
   const expires = session?.exp ? new Date(session.exp * 1000).toLocaleTimeString() : "—";
   const operator = sessionDisplayName(session);
   const role = sessionRoleLabel(session);
-  const tenant = sessionTenantLabel(session);
+  const tenant = entered?.tenantId ?? null;
 
   return (
     <>

@@ -26,10 +26,11 @@ describe("navItemsForRole", () => {
     expect(hrefs).toEqual(["/", "/programmes", "/identities"]);
   });
 
-  it("shows Status + Tenant + Fleet + Runs + Initiatives + Metrics + Checkpoints + Board for tenant_admin", () => {
+  it("shows Status + Enter + Tenant + Fleet + Runs + Initiatives + Metrics + Checkpoints + Board for tenant_admin", () => {
     const hrefs = navItemsForRole("tenant_admin").map((i) => i.href);
     expect(hrefs).toEqual([
       "/",
+      "/programmes/enter",
       "/tenant",
       "/fleet",
       "/runs",
@@ -51,6 +52,7 @@ describe("navItemsForRole", () => {
       "/",
       "/programmes",
       "/identities",
+      "/programmes/enter",
       "/tenant",
       "/fleet",
       "/runs",

@@ -1,17 +1,18 @@
 // CAP-E board tickets — GET/POST/PATCH with ?op=list|create|status|link
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, getSessionToken, decodeJwtPayload } from "@/lib/auth";
+import { getSessionToken, decodeJwtPayload } from "@/lib/auth";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { logRequestStart, logRequestSuccess, logRequestError } from "@/lib/bff-logging";
 import { createApiLogger } from "@/lib/logging";
+import { getEnteredProgrammeContext } from "@/lib/programme-context";
 import { upstreamFetch } from "@/lib/upstream-fetch";
 
 async function requireTenant(request: NextRequest) {
   const token = await getSessionToken();
   if (!token) return { error: bffError(401, "auth.errors.sessionExpired") as Response };
   const payload = decodeJwtPayload(token);
-  const session = await getSession();
-  const tenantId = session?.tenant_id;
+  const entered = await getEnteredProgrammeContext();
+  const tenantId = entered?.tenantId;
   if (typeof tenantId !== "string" || !tenantId) {
     return { error: bffError(400, "board.errors.missingTenant") as Response };
   }

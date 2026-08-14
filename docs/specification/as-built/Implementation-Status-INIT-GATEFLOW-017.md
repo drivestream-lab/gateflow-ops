@@ -6,8 +6,8 @@ Initiative detail. Index row lives in `implementation-status.md`.
 | ---- | ----------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | W0   | Programme-context chassis (ADR-002 helper + cookie + email-shape) | ✅ human_approved | unit: `tests/unit/programme-context.test.ts`, `tests/unit/auth-login-upstream.test.ts`; live: `tests/verify/01-login-status-page.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W0.md` |
 | W1   | Identity factory BFF/UI (CTR-01)                                  | ✅ human_approved | unit: `tests/unit/identities-bff.test.ts`; live: `tests/verify/07-identity-factory.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W1.md`                                               |
-| W2   | Grants + purge invite/attach (CTR-02)                             | ✅ human_approved | unit: `tests/unit/grants-bff.test.ts`; live: `tests/verify/08-grants-membership.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W2.md`                                                   |
-| W3   | Programme enter + delivery rebind (CTR-04, ADR-002 migration)     | ⏳ not started    | `tests/verify/09-programme-enter-delivery.md` (planned)                                                                                                                               |
+| W2   | Grants + purge invite/attach (CTR-02)                             | ✅ human_approved | unit: `tests/unit/grants-bff.test.ts`; live: `tests/verify/08-grants-membership.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W2.md`                                                  |
+| W3   | Programme enter + delivery rebind (CTR-04, ADR-002 migration)     | 🔧 implemented    | unit: `tests/unit/programme-enter.test.ts`; live: `tests/verify/09-programme-enter-delivery.md`                                                                                       |
 
 ## W0 notes
 
@@ -18,7 +18,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - `dev-stub` leaves `tenant_id` unset
 - `/api/auth/me` may echo non-secret entered ids; no token fields
 - Email-shape refuse: `portalLoginRefuseKey` → `auth.errors.notAnEmail` (no upstream)
-- Delivery Route Handlers still read JWT `tenant_id` until W3 (do not half-migrate)
+- Delivery Route Handlers read entered scope from the helper as of W3 (not JWT `tenant_id`)
 - Live: human at `wave-acceptance` follows `tests/verify/01-login-status-page.md`
 - Ground: `docs/specification/reports/Ground-Report-INIT-GATEFLOW-017-W0.md` (§Contracts produced → W1/W3)
 
@@ -42,4 +42,15 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - Live: human at `wave-acceptance` follows `tests/verify/08-grants-membership.md`
 - Kill line: stop if CTR-02 5xx or login still 014-binds
 - Ground: `docs/specification/reports/Ground-Report-INIT-GATEFLOW-017-W2.md` (§Contracts produced → W3)
-- Programme-context cookie is not written (W3)
+- Programme-context cookie is written on enter / cleared on leave (W3)
+
+## W3 notes
+
+- BFF: `GET`/`POST`/`DELETE /api/auth/programme` (leave via `?op=leave` or `DELETE`)
+- Enter sets `PROGRAMME_CONTEXT_COOKIE` `{ programmeId, tenantId }`; does not remint `SESSION_COOKIE`
+- Delivery BFF + RSC pages use `getEnteredProgrammeContext()` only; helper `null` → named `missingTenant` / redirect to `/programmes/enter`
+- CAP-P `app/api/gateflow/programmes` is **not** migrated (REQ-27 onboard stays `platform_admin`)
+- UI: `/programmes/enter` for `tenant_admin` only; zero-grant named empty state; no factory list
+- Live: human at `wave-acceptance` follows `tests/verify/09-programme-enter-delivery.md`
+- Kill line: stop if delivery still uses JWT `tenant_id` or provider rejects identity Bearer
+- Status is `implemented` until human wave-acceptance — do not mark `human_approved` here

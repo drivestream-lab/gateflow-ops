@@ -44,19 +44,19 @@
 
 ### Contracts consumed (from prior Ground Reports)
 
-| Assumed contract             | Entry point                                      | Input shape                                              | Output shape                                              | Source           | Confirmed?                                                                 |
-| ---------------------------- | ------------------------------------------------ | -------------------------------------------------------- | --------------------------------------------------------- | ---------------- | -------------------------------------------------------------------------- |
-| Entered-programme helper     | `getEnteredProgrammeContext`                     | cookie store                                             | `{ programmeId, tenantId }` or `null`                     | Ground-Report-W0 | [x] yes — unused in W1/W2; W3 **writes** cookie and migrates delivery reads |
-| Programme-context cookie     | `PROGRAMME_CONTEXT_COOKIE` + login/logout clear  | login/logout / enter/leave                               | httpOnly ids cookie; expired on login/logout              | Ground-Report-W0 | [x] yes — W3 enter/leave must set/clear; do not remint `SESSION_COOKIE`    |
-| Me introspection             | `GET /api/auth/me`                               | session + helper                                         | entered ids from helper only; no token                    | Ground-Report-W0 | [x] yes — `enteredProgrammeId` / `enteredTenantId` already echoed          |
-| Identity session + Bearer    | `upstreamFetch` / `getSessionToken`              | path + init                                              | upstream Response                                         | Ground-Report-W0 | [x] yes — identity Bearer stays on `SESSION_COOKIE`                        |
-| Grants list/grant/detach     | `GET` / `POST /api/gateflow/grants`              | `identity_id` / `programme_id`; grant/detach body        | `{ grants: GrantDto[] }` or one `GrantDto`                | Ground-Report-W2 | [x] yes — **`platform_admin` only**; W3 enter must not invent grant here   |
-| Grant DTO                    | `stripGrantSecrets`                              | raw upstream object                                      | `{ identityId, programmeId, email, name, programmeName }` | Ground-Report-W2 | [x] yes — enter views must not leak password                               |
-| Grant write refuses          | `grantWriteRefuseKey`                            | grant/detach body                                        | named i18n key or null                                    | Ground-Report-W2 | [x] yes — enter is not a grant; not-granted is a different refuse          |
-| Membership chrome            | `MembershipPanel`                                | `programmeId` or `identityId`                            | identities ↔ programmes                                   | Ground-Report-W2 | [x] yes — enter UI is a **different** surface                              |
-| Invite/attach absence        | leftover `tenants/users` / `tenant-admins`       | any actor                                                | 404 / no UI                                               | Ground-Report-W2 | [x] yes — W3 must not resurrect invite/attach                              |
-| Identity factory + nav       | `/identities` + `navItemsForRole`                | session role                                             | factory hidden from `tenant_admin`                        | Ground-Report-W1 | [x] yes — REQ-22 / REQ-26 nav hide completes in W3                         |
-| Platform-admin gate          | `requirePlatformAdminSession`                    | session                                                  | 401/403 or session                                        | W1 chassis       | [x] yes — factory/grant stay `platform_admin`; delivery stays refused      |
+| Assumed contract          | Entry point                                     | Input shape                                       | Output shape                                              | Source           | Confirmed?                                                                  |
+| ------------------------- | ----------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------- |
+| Entered-programme helper  | `getEnteredProgrammeContext`                    | cookie store                                      | `{ programmeId, tenantId }` or `null`                     | Ground-Report-W0 | [x] yes — unused in W1/W2; W3 **writes** cookie and migrates delivery reads |
+| Programme-context cookie  | `PROGRAMME_CONTEXT_COOKIE` + login/logout clear | login/logout / enter/leave                        | httpOnly ids cookie; expired on login/logout              | Ground-Report-W0 | [x] yes — W3 enter/leave must set/clear; do not remint `SESSION_COOKIE`     |
+| Me introspection          | `GET /api/auth/me`                              | session + helper                                  | entered ids from helper only; no token                    | Ground-Report-W0 | [x] yes — `enteredProgrammeId` / `enteredTenantId` already echoed           |
+| Identity session + Bearer | `upstreamFetch` / `getSessionToken`             | path + init                                       | upstream Response                                         | Ground-Report-W0 | [x] yes — identity Bearer stays on `SESSION_COOKIE`                         |
+| Grants list/grant/detach  | `GET` / `POST /api/gateflow/grants`             | `identity_id` / `programme_id`; grant/detach body | `{ grants: GrantDto[] }` or one `GrantDto`                | Ground-Report-W2 | [x] yes — **`platform_admin` only**; W3 enter must not invent grant here    |
+| Grant DTO                 | `stripGrantSecrets`                             | raw upstream object                               | `{ identityId, programmeId, email, name, programmeName }` | Ground-Report-W2 | [x] yes — enter views must not leak password                                |
+| Grant write refuses       | `grantWriteRefuseKey`                           | grant/detach body                                 | named i18n key or null                                    | Ground-Report-W2 | [x] yes — enter is not a grant; not-granted is a different refuse           |
+| Membership chrome         | `MembershipPanel`                               | `programmeId` or `identityId`                     | identities ↔ programmes                                   | Ground-Report-W2 | [x] yes — enter UI is a **different** surface                               |
+| Invite/attach absence     | leftover `tenants/users` / `tenant-admins`      | any actor                                         | 404 / no UI                                               | Ground-Report-W2 | [x] yes — W3 must not resurrect invite/attach                               |
+| Identity factory + nav    | `/identities` + `navItemsForRole`               | session role                                      | factory hidden from `tenant_admin`                        | Ground-Report-W1 | [x] yes — REQ-22 / REQ-26 nav hide completes in W3                          |
+| Platform-admin gate       | `requirePlatformAdminSession`                   | session                                           | 401/403 or session                                        | W1 chassis       | [x] yes — factory/grant stay `platform_admin`; delivery stays refused       |
 
 **Unconfirmed contracts:**
 
@@ -135,12 +135,12 @@
 
 ### Verification plan
 
-| Layer        | What it proves                                                                                          | Command                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| Static check | lint/types/format                                                                                       | `make check`                                |
-| Unit         | not-granted / missing-context named refuse; no JWT `tenant_id` fallback                                 | `make test`                                 |
-| Live verify  | enter P1 then P2; zero-grant empty; 016 delivery after enter; invite absent; platform delivery refused  | `tests/verify/09-programme-enter-delivery.md` |
-| Ground check | N/A — `/ground-spec` after accept                                                                       | N/A                                         |
+| Layer        | What it proves                                                                                         | Command                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| Static check | lint/types/format                                                                                      | `make check`                                  |
+| Unit         | not-granted / missing-context named refuse; no JWT `tenant_id` fallback                                | `make test`                                   |
+| Live verify  | enter P1 then P2; zero-grant empty; 016 delivery after enter; invite absent; platform delivery refused | `tests/verify/09-programme-enter-delivery.md` |
+| Ground check | N/A — `/ground-spec` after accept                                                                      | N/A                                           |
 
 ### Human wave-acceptance
 
