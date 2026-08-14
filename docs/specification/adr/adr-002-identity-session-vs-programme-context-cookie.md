@@ -15,8 +15,8 @@
 | superseded_by | none |
 | Decision owner | @nikd10x |
 | Approval evidence | https://github.com/drivestream-lab/gateflow-ops/pull/32#issuecomment-5290307320 |
-| Approved head | e6c19a19c7dc5cc2f7fa749657a0f9159511c625 |
-| Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:ab9d087eff5f6e50a2c023a3d9a33a3ab18032378bd7367874f92db117bdc4ce |
+| Approved head | ae5e43115fa4090fcf487940bb99756709db9f95 |
+| Lint evidence | adr_boundary_lint.py 2/2, PASS, sha256:501e402009b86244f70aef08f405b11a4f706979e223f7b7a1b977990c46a499 |
 
 > If `changes_user_visible_behavior` or `spec_amendment_required` would be
 > `true`, **stop**: amend and re-approve the product spec before this ADR may

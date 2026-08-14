@@ -10,7 +10,7 @@
 | Impact map / revision | `prayog-meta/prd/reports/Impact-Map-INIT-GATEFLOW-017.md` / `1` |
 | Repo scope digest | `sha256:13cee9aae41718fd4ad8655d77738042761b0e45db7eefc898a693c42c2fb987` |
 | Approved meta PR head | `601b00e0a74510a6af1c33bc80ca27260995c094` |
-| Source freshness | CURRENT — meta PR #42 merged; head `601b00e0…` = G1; H1–H3 match spec header; tip on Draft PR #32 |
+| Source freshness | CURRENT — meta PR #42 merged; head `601b00e0…` = G1; H1–H3 match spec header; ADR-002 Approved head `ae5e431` |
 | Repo | gateflow-ops |
 | Date | 2026-08-14 |
 | Branch | `chore/INIT-GATEFLOW-017-spec-gateflow-ops` (spec PR — TDD published via Forge) |
@@ -155,7 +155,7 @@ Every feasibility `NEW-ADR` appears once. `ADR_REQUIRED` rows link actual files.
 
 | Finding | Classification | ADR file / TDD section | product_constraints | Product exclusions | Recommendation / default | Status | Digest |
 |---------|----------------|------------------------|---------------------|--------------------|--------------------------|--------|--------|
-| FF-01 | ADR_REQUIRED | `docs/specification/adr/adr-002-identity-session-vs-programme-context-cookie.md` | `[REQ-12, REQ-14, REQ-16, REQ-17, REQ-18]` | See those REQ ids | Option B — identity cookie + programme context cookie | Accepted | `sha256:297a69592bbf6f0dc5d06fc9561ce310d3df0a71208ca954c50b24a74482f1a9` |
+| FF-01 | ADR_REQUIRED | `docs/specification/adr/adr-002-identity-session-vs-programme-context-cookie.md` | `[REQ-12, REQ-14, REQ-16, REQ-17, REQ-18]` | See those REQ ids | Option B — identity cookie + programme context cookie | Accepted | `sha256:4fadc933e25fb92930d6104f1bff67d937ee2410b2d8f66b7b3797af5f9bd667` |
 | FF-02 | TDD_ONLY | §2 BFF resource map | CTR-01–04 | none | folders in §2 table | Resolved | N/A |
 | FF-03 | TDD_ONLY | §2 purge rows; §5 | REQ-20, REQ-21 | none | delete invite + attach modules; amend verify 02/03 | Resolved | N/A |
 | FF-04 | DEFERRED_WITH_DEFAULT | §9 | kill line | none | sequential: provider enter+grant HTTP live, then ops BFF/pages that call those routes | Deferred | N/A |
@@ -304,7 +304,7 @@ manual/scripted under `tests/verify/` (no Makefile verify target).
 | T9 Engineering questions zero | PASS | PE items resolved/deferred; PM/domain in §10–11 |
 | T10 PE review readiness | PASS | Accepted TDD + ADR-002; `ready_for_plan: false` |
 | T11 ADR artifact integrity | PASS | ADR-002 Accepted at `adr_dir` with required sections |
-| T12 Product-boundary integrity | PASS | ADR `--strict` 2/2 PASS `sha256:ab9d087eff5f6e50a2c023a3d9a33a3ab18032378bd7367874f92db117bdc4ce`; TDD `--tdd --require-sources` PASS |
+| T12 Product-boundary integrity | PASS | ADR `--strict` 2/2 PASS `sha256:501e402009b86244f70aef08f405b11a4f706979e223f7b7a1b977990c46a499`; TDD `--tdd --require-sources` PASS |
 
 ---
 
@@ -366,8 +366,8 @@ handoff:
     new_adr: true
     adr_files:
       - docs/specification/adr/adr-002-identity-session-vs-programme-context-cookie.md
-    adr_digest: sha256:297a69592bbf6f0dc5d06fc9561ce310d3df0a71208ca954c50b24a74482f1a9
-    lint_evidence: "adr_boundary_lint.py 2/2, PASS, sha256:ab9d087eff5f6e50a2c023a3d9a33a3ab18032378bd7367874f92db117bdc4ce"
+    adr_digest: sha256:4fadc933e25fb92930d6104f1bff67d937ee2410b2d8f66b7b3797af5f9bd667
+    lint_evidence: "adr_boundary_lint.py 2/2, PASS, sha256:501e402009b86244f70aef08f405b11a4f706979e223f7b7a1b977990c46a499"
     spec_pr: https://github.com/drivestream-lab/gateflow-ops/pull/32
     codegraph_provider: mcp-user-prayog-fleet-cbm
     grounding_depth: light
