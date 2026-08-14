@@ -11,14 +11,18 @@ import { env } from "@/lib/env";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { createApiLogger } from "@/lib/logging";
 import { upstreamFetch } from "@/lib/upstream-fetch";
-import { toUpstreamLoginBody, UPSTREAM_AUTH_LOGIN_PATH } from "@/lib/auth-login-upstream";
+import {
+  portalLoginRefuseKey,
+  toUpstreamLoginBody,
+  UPSTREAM_AUTH_LOGIN_PATH,
+} from "@/lib/auth-login-upstream";
+import { programmeContextCookieOptions } from "@/lib/programme-context";
 
 function devStubToken(email: string): string {
   const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
   const payload = {
     sub: `dev-${email}`,
     email,
-    tenant_id: "dev",
     exp: Math.floor(Date.now() / 1000) + 8 * 3600,
   };
   return `${b64({ alg: "none", typ: "JWT" })}.${b64(payload)}.dev`;
@@ -32,7 +36,10 @@ export async function POST(request: NextRequest) {
     email?: string;
     password?: string;
   } | null;
-  const upstreamBody = body ? toUpstreamLoginBody(body) : null;
+  if (!body) return bffError(400, "auth.errors.invalidRequest");
+  const refuseKey = portalLoginRefuseKey(body);
+  if (refuseKey) return bffError(400, refuseKey);
+  const upstreamBody = toUpstreamLoginBody(body);
   if (!upstreamBody) return bffError(400, "auth.errors.invalidRequest");
 
   let token: string;
@@ -63,6 +70,10 @@ export async function POST(request: NextRequest) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
+  });
+  response.cookies.set(env.PROGRAMME_CONTEXT_COOKIE, "", {
+    ...programmeContextCookieOptions(),
+    maxAge: 0,
   });
   logger.info("session established");
   return response;
