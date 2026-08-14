@@ -5,7 +5,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 | Wave | Capability                                                        | Status            | Verification                                                                                                                                                                          |
 | ---- | ----------------------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | W0   | Programme-context chassis (ADR-002 helper + cookie + email-shape) | ✅ human_approved | unit: `tests/unit/programme-context.test.ts`, `tests/unit/auth-login-upstream.test.ts`; live: `tests/verify/01-login-status-page.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W0.md` |
-| W1   | Identity factory BFF/UI (CTR-01)                                  | 🔧 implemented    | unit: `tests/unit/identities-bff.test.ts`; live: `tests/verify/07-identity-factory.md` (human at wave-acceptance)                                                                     |
+| W1   | Identity factory BFF/UI (CTR-01)                                  | ✅ human_approved | unit: `tests/unit/identities-bff.test.ts`; live: `tests/verify/07-identity-factory.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W1.md`                                               |
 | W2   | Grants + purge invite/attach (CTR-02)                             | ⏳ not started    | `tests/verify/08-grants-membership.md` (planned)                                                                                                                                      |
 | W3   | Programme enter + delivery rebind (CTR-04, ADR-002 migration)     | ⏳ not started    | `tests/verify/09-programme-enter-delivery.md` (planned)                                                                                                                               |
 
@@ -31,3 +31,4 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - Grant/detach and programme-enter are W2/W3 — not on this surface
 - Live: human at `wave-acceptance` follows `tests/verify/07-identity-factory.md`
 - Kill line: stop if CTR-01 5xx or membership still 014-binds
+- Ground: `docs/specification/reports/Ground-Report-INIT-GATEFLOW-017-W1.md` (§Contracts produced → W2)
