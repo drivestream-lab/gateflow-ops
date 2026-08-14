@@ -7,7 +7,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 | W0   | Programme-context chassis (ADR-002 helper + cookie + email-shape) | ✅ human_approved | unit: `tests/unit/programme-context.test.ts`, `tests/unit/auth-login-upstream.test.ts`; live: `tests/verify/01-login-status-page.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W0.md` |
 | W1   | Identity factory BFF/UI (CTR-01)                                  | ✅ human_approved | unit: `tests/unit/identities-bff.test.ts`; live: `tests/verify/07-identity-factory.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W1.md`                                               |
 | W2   | Grants + purge invite/attach (CTR-02)                             | ✅ human_approved | unit: `tests/unit/grants-bff.test.ts`; live: `tests/verify/08-grants-membership.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W2.md`                                                  |
-| W3   | Programme enter + delivery rebind (CTR-04, ADR-002 migration)     | 🔧 implemented    | unit: `tests/unit/programme-enter.test.ts`; live: `tests/verify/09-programme-enter-delivery.md`                                                                                       |
+| W3   | Programme enter + delivery rebind (CTR-04, ADR-002 migration)     | ✅ human_approved | unit: `tests/unit/programme-enter.test.ts`; live: `tests/verify/09-programme-enter-delivery.md`; ground: `Ground-Report-INIT-GATEFLOW-017-W3.md`                                      |
 
 ## W0 notes
 
@@ -53,4 +53,5 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - UI: `/programmes/enter` for `tenant_admin` only; zero-grant named empty state; no factory list
 - Live: human at `wave-acceptance` follows `tests/verify/09-programme-enter-delivery.md`
 - Kill line: stop if delivery still uses JWT `tenant_id` or provider rejects identity Bearer
-- Status is `implemented` until human wave-acceptance — do not mark `human_approved` here
+- Status is `human_approved` from wave-acceptance on PR #41 (not re-approved here)
+- Ground: `docs/specification/reports/Ground-Report-INIT-GATEFLOW-017-W3.md` (§Contracts produced → initiative-closure)
