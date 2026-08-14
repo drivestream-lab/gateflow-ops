@@ -1,6 +1,6 @@
 # Verify: W0 identity + fleet onboarding (INIT-GATEFLOW-016)
 
-<!-- prayog:covers: REQ-01, REQ-02, REQ-03, REQ-04, REQ-05, REQ-06, REQ-07, REQ-08 -->
+<!-- prayog:covers: REQ-01, REQ-03, REQ-04, REQ-05, REQ-06, REQ-07, REQ-08 -->
 
 Live smoke against **real gateflow** (not the chassis echo). Unit ownership:
 `tests/unit/onboarding-verdict.test.ts` (REQ-07 composition).
@@ -23,7 +23,7 @@ Live smoke against **real gateflow** (not the chassis echo). Unit ownership:
    (`AUTH_MODE=jwt-upstream` → real JWT cookie with `tenant_id`).
 2. Open **Tenant** (`/tenant`):
    - Tenant detail shows id/name/workspace for the **session tenant** (REQ-01).
-   - Invite a teammate with a safe non-prod identity; success message appears (REQ-02).
+   - Confirm there is **no** invite / teammate-attach control (017 REQ-20 supersedes 016 invite).
 3. Open **Fleet** (`/fleet`):
    - **Active fleet** is the lead section (may be empty).
    - If disconnected: connect with meta **org/repo only** (no git ref field) (REQ-04).

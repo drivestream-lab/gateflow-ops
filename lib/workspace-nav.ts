@@ -6,7 +6,8 @@ export interface WorkspaceNavItem {
   roles?: Array<"platform_admin" | "tenant_admin">;
 }
 
-/** Config-driven primary nav — filter with `navItemsForRole`. */
+/** Config-driven primary nav — filter with `navItemsForRole`.
+ * W2 membership chrome lives on programme/identity detail — no extra nav href. */
 export const WORKSPACE_NAV: WorkspaceNavItem[] = [
   { href: "/", labelKey: "nav.status" },
   { href: "/programmes", labelKey: "nav.programmes", roles: ["platform_admin"] },
