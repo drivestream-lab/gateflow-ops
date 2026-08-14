@@ -24,7 +24,7 @@ describe("session-role", () => {
 describe("navItemsForRole", () => {
   it("shows Status + Programmes for platform_admin", () => {
     const hrefs = navItemsForRole("platform_admin").map((i) => i.href);
-    expect(hrefs).toEqual(["/", "/programmes"]);
+    expect(hrefs).toEqual(["/", "/programmes", "/identities"]);
   });
 
   it("shows Status + Tenant + Fleet + Runs + Initiatives + Metrics + Checkpoints + Board for tenant_admin", () => {
@@ -51,6 +51,7 @@ describe("navItemsForRole", () => {
     expect(WORKSPACE_NAV.map((i) => i.href)).toEqual([
       "/",
       "/programmes",
+      "/identities",
       "/tenant",
       "/fleet",
       "/runs",

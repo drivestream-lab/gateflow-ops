@@ -13,6 +13,7 @@ import initiatives from "@/data/locales/en/initiatives.json";
 import metrics from "@/data/locales/en/metrics.json";
 import checkpoints from "@/data/locales/en/checkpoints.json";
 import board from "@/data/locales/en/board.json";
+import identities from "@/data/locales/en/identities.json";
 
 const catalogs: Record<string, Record<string, string>> = {
   common,
@@ -27,6 +28,7 @@ const catalogs: Record<string, Record<string, string>> = {
   metrics,
   checkpoints,
   board,
+  identities,
 };
 
 export function t(key: string): string {
