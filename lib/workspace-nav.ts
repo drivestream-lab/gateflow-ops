@@ -10,6 +10,7 @@ export interface WorkspaceNavItem {
 export const WORKSPACE_NAV: WorkspaceNavItem[] = [
   { href: "/", labelKey: "nav.status" },
   { href: "/programmes", labelKey: "nav.programmes", roles: ["platform_admin"] },
+  { href: "/identities", labelKey: "nav.identities", roles: ["platform_admin"] },
   { href: "/tenant", labelKey: "nav.tenant", roles: ["tenant_admin"] },
   { href: "/fleet", labelKey: "nav.fleet", roles: ["tenant_admin"] },
   { href: "/runs", labelKey: "nav.runs", roles: ["tenant_admin"] },

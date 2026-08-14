@@ -1,6 +1,7 @@
 {
   "nav.status": "System status",
   "nav.programmes": "Programmes",
+  "nav.identities": "Identities",
   "nav.tenant": "Tenant",
   "nav.fleet": "Fleet",
   "nav.runs": "Runs",

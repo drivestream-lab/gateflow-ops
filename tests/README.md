@@ -8,6 +8,7 @@ Ownership per testing-verify-flows.mdc. Rows here must match
 | JWT decode/expiry helpers                                                      | `auth.test.ts`                                             | —                                                                    |
 | jwt-upstream login body/path mapping                                           | `auth-login-upstream.test.ts`                              | `verify/01` (dev-stub); W0 verify (live)                             |
 | 017 W0 programme-context helper + email-shape (REQ-03, REQ-12, REQ-14, REQ-18) | `programme-context.test.ts`, `auth-login-upstream.test.ts` | `verify/01-login-status-page.md`                                     |
+| 017 W1 identity factory (REQ-01–05, 12–14, 22, 25, 29, 30)                     | `identities-bff.test.ts`                                   | `verify/07-identity-factory.md`                                      |
 | i18n catalog resolution                                                        | `i18n.test.ts`                                             | —                                                                    |
 | BFF error mapping                                                              | `bff.test.ts`                                              | —                                                                    |
 | Login → session cookie → status page                                           | —                                                          | `verify/01-login-status-page.md`                                     |
