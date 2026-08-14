@@ -1,9 +1,10 @@
 // CAP-F initiative detail + readouts — GET ?initiative_id=&op=&org=&repo=&wave_id=
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, getSessionToken, decodeJwtPayload } from "@/lib/auth";
+import { getSessionToken, decodeJwtPayload } from "@/lib/auth";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { logRequestStart, logRequestSuccess, logRequestError } from "@/lib/bff-logging";
 import { createApiLogger } from "@/lib/logging";
+import { getEnteredProgrammeContext } from "@/lib/programme-context";
 import { upstreamFetch } from "@/lib/upstream-fetch";
 
 const OPS = new Set([
@@ -44,8 +45,8 @@ export async function GET(request: NextRequest) {
   const token = await getSessionToken();
   if (!token) return bffError(401, "auth.errors.sessionExpired");
   const payload = decodeJwtPayload(token);
-  const session = await getSession();
-  const tenantId = session?.tenant_id;
+  const entered = await getEnteredProgrammeContext();
+  const tenantId = entered?.tenantId;
   if (typeof tenantId !== "string" || !tenantId) {
     return bffError(400, "initiatives.errors.missingTenant");
   }

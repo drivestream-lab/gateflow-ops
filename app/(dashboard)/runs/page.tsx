@@ -3,13 +3,15 @@ import { PageHeader } from "@/components/workspace/page-header";
 import { PageBody } from "@/components/workspace/page-body";
 import { RunCockpit } from "@/components/runs/run-cockpit";
 import { getSession } from "@/lib/auth";
+import { getEnteredProgrammeContext } from "@/lib/programme-context";
 import { isTenantAdmin } from "@/lib/session-role";
 import { t } from "@/lib/i18n";
 
 export default async function RunsPage() {
   const session = await getSession();
-  if (!isTenantAdmin(session) || !session?.tenant_id) {
-    redirect("/");
+  const entered = await getEnteredProgrammeContext();
+  if (!isTenantAdmin(session) || !entered) {
+    redirect(isTenantAdmin(session) ? "/programmes/enter" : "/");
   }
 
   return (

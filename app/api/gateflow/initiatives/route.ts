@@ -1,19 +1,20 @@
 // CAP-F initiatives list + closure start.
 // GET → gateflow GET /api/v1/initiatives; POST ?op=closure-start → POST /initiatives/closure/start
 import { NextRequest, NextResponse } from "next/server";
-import { getSession, getSessionToken, decodeJwtPayload } from "@/lib/auth";
+import { getSessionToken, decodeJwtPayload } from "@/lib/auth";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { logRequestStart, logRequestSuccess, logRequestError } from "@/lib/bff-logging";
 import { PAGINATION } from "@/lib/constants";
 import { createApiLogger } from "@/lib/logging";
+import { getEnteredProgrammeContext } from "@/lib/programme-context";
 import { upstreamFetch } from "@/lib/upstream-fetch";
 
 async function requireTenant(request: NextRequest) {
   const token = await getSessionToken();
   if (!token) return { error: bffError(401, "auth.errors.sessionExpired") as Response };
   const payload = decodeJwtPayload(token);
-  const session = await getSession();
-  const tenantId = session?.tenant_id;
+  const entered = await getEnteredProgrammeContext();
+  const tenantId = entered?.tenantId;
   if (typeof tenantId !== "string" || !tenantId) {
     return { error: bffError(400, "initiatives.errors.missingTenant") as Response };
   }

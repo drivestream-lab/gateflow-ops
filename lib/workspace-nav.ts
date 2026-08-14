@@ -7,11 +7,12 @@ export interface WorkspaceNavItem {
 }
 
 /** Config-driven primary nav — filter with `navItemsForRole`.
- * W2 membership chrome lives on programme/identity detail — no extra nav href. */
+ * W3 enter is a tenant_admin surface; factory/onboard stay platform_admin. */
 export const WORKSPACE_NAV: WorkspaceNavItem[] = [
   { href: "/", labelKey: "nav.status" },
   { href: "/programmes", labelKey: "nav.programmes", roles: ["platform_admin"] },
   { href: "/identities", labelKey: "nav.identities", roles: ["platform_admin"] },
+  { href: "/programmes/enter", labelKey: "nav.enter", roles: ["tenant_admin"] },
   { href: "/tenant", labelKey: "nav.tenant", roles: ["tenant_admin"] },
   { href: "/fleet", labelKey: "nav.fleet", roles: ["tenant_admin"] },
   { href: "/runs", labelKey: "nav.runs", roles: ["tenant_admin"] },

@@ -1,13 +1,13 @@
 # Learning extract — INIT-GATEFLOW-017 W2
 
-| Field               | Value                                                                                      |
-| ------------------- | ------------------------------------------------------------------------------------------ |
-| Wave                | W2 — Grants and purge invite/attach                                                        |
-| Initiative          | INIT-GATEFLOW-017                                                                          |
-| Branch / head       | `feature/INIT-GATEFLOW-017-w2-grants-purge` @ `44eb6bd6550577601dbcdc75989c17a843b07c96`   |
-| Pass-1 tip (approx) | `44eb6bd6550577601dbcdc75989c17a843b07c96`                                                 |
-| human_fix_detected  | no                                                                                         |
-| Date                | 2026-08-14                                                                                 |
+| Field               | Value                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| Wave                | W2 — Grants and purge invite/attach                                                      |
+| Initiative          | INIT-GATEFLOW-017                                                                        |
+| Branch / head       | `feature/INIT-GATEFLOW-017-w2-grants-purge` @ `44eb6bd6550577601dbcdc75989c17a843b07c96` |
+| Pass-1 tip (approx) | `44eb6bd6550577601dbcdc75989c17a843b07c96`                                               |
+| human_fix_detected  | no                                                                                       |
+| Date                | 2026-08-14                                                                               |
 
 ## Learnings
 

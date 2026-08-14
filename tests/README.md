@@ -10,6 +10,7 @@ Ownership per testing-verify-flows.mdc. Rows here must match
 | 017 W0 programme-context helper + email-shape (REQ-03, REQ-12, REQ-14, REQ-18) | `programme-context.test.ts`, `auth-login-upstream.test.ts` | `verify/01-login-status-page.md`                                     |
 | 017 W1 identity factory (REQ-01–05, 12–14, 22, 25, 29, 30)                     | `identities-bff.test.ts`                                   | `verify/07-identity-factory.md`                                      |
 | 017 W2 grants + purge invite/attach (REQ-06–11, 15, 20, 21, 24, 28, 30)        | `grants-bff.test.ts`                                       | `verify/08-grants-membership.md`                                     |
+| 017 W3 programme enter + delivery rebind (REQ-16–19, 22, 23, 26, 27)           | `programme-enter.test.ts`                                  | `verify/09-programme-enter-delivery.md`                              |
 | i18n catalog resolution                                                        | `i18n.test.ts`                                             | —                                                                    |
 | BFF error mapping                                                              | `bff.test.ts`                                              | —                                                                    |
 | Login → session cookie → status page                                           | —                                                          | `verify/01-login-status-page.md`                                     |
