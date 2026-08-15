@@ -17,7 +17,7 @@ export function createApiLogger(
   method: string,
   url: string,
   correlationId?: string,
-  context?: { userId?: string; tenantId?: string; module?: string },
+  context?: { userId?: string; tenantId?: string; programmeId?: string; module?: string },
 ) {
   return root.child({
     module: context?.module ?? "api",
@@ -26,6 +26,7 @@ export function createApiLogger(
     correlationId: correlationId ?? crypto.randomUUID(),
     userId: context?.userId,
     tenantId: context?.tenantId,
+    programmeId: context?.programmeId,
   });
 }
 

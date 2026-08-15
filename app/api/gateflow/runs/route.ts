@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
   if (!token) return bffError(401, "auth.errors.sessionExpired");
   const payload = decodeJwtPayload(token);
   const entered = await getEnteredProgrammeContext();
-  const tenantId = entered?.tenantId;
-  if (typeof tenantId !== "string" || !tenantId) {
+  const programmeId = entered?.programmeId;
+  if (typeof programmeId !== "string" || !programmeId) {
     return bffError(400, "runs.errors.missingTenant");
   }
 
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-runs-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 

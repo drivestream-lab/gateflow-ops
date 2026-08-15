@@ -17,6 +17,8 @@ export const env = {
   SESSION_COOKIE: process.env.SESSION_COOKIE ?? "portal_session",
   /** httpOnly store for entered programme/tenant ids (ADR-002). Not a Bearer. */
   PROGRAMME_CONTEXT_COOKIE: process.env.PROGRAMME_CONTEXT_COOKIE ?? "portal_programme_context",
+  /** Durable httpOnly hint: last entered programme per identity (auto-restore at login). */
+  LAST_PROGRAMME_COOKIE: process.env.LAST_PROGRAMME_COOKIE ?? "portal_last_programme",
   LOG_LEVEL: process.env.LOG_LEVEL ?? "info",
   LOG_PRETTY: process.env.LOG_PRETTY === "true",
   LOG_UPSTREAM_CALLS: process.env.LOG_UPSTREAM_CALLS !== "false",

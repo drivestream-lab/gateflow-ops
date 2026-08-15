@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/workspace/page-header";
 import { PageBody } from "@/components/workspace/page-body";
+import { CheckpointViews } from "@/components/checkpoints/checkpoint-views";
 import { RunCockpit } from "@/components/runs/run-cockpit";
 import { getSession } from "@/lib/auth";
 import { getEnteredProgrammeContext } from "@/lib/programme-context";
@@ -18,7 +19,16 @@ export default async function RunsPage() {
     <>
       <PageHeader title={t("runs.page.title")} description={t("runs.page.description")} />
       <PageBody>
-        <RunCockpit />
+        <div className="space-y-8">
+          <RunCockpit />
+          <section>
+            <h2 className="mb-3 text-lg font-semibold">{t("checkpoints.page.title")}</h2>
+            <p className="mb-4 text-sm text-muted-foreground">
+              {t("checkpoints.page.description")}
+            </p>
+            <CheckpointViews />
+          </section>
+        </div>
       </PageBody>
     </>
   );

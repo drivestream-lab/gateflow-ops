@@ -26,10 +26,12 @@ Unit tests owning shared logic: `tests/unit/auth.test.ts`,
 3. Sign in with valid gateflow credentials (`jwt-upstream`) — or any
    well-formed email/password if temporarily on `dev-stub` (upstream health
    still requires reachable gateflow)
-4. Expect the System status page inside WorkspaceShell:
-   - Page header title is “System status” (not a Welcome hero)
-   - One status Card: operator, role/tenant when present, session expiry, upstream
-   - “Upstream API ✓ connected (…ms)” (BFF probe via gateflow `GET /health`)
+4. Expect a **role home** inside WorkspaceShell (not a System status page):
+   - `platform_admin` lands on **Programmes**
+   - `tenant_admin` with no entered programme lands on **Enter a programme**
+   - `tenant_admin` after enter lands on **Runs**
+   - Chrome shows upstream health (connected / unreachable) — not a nav item
+   - Sidebar shows the signed-in operator; no “System status” nav row
 5. `curl -s localhost:3000/api/health` → `{"status":"ok"}` (this app’s own health)
 6. **REQ-03 — malformed email refused (no upstream sign-in):** from a signed-out
    browser or `curl`, `POST /api/auth/login` with JSON

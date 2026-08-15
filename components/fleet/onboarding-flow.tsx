@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   useConnectProgramme,
   useDeselectRepo,
@@ -17,11 +15,16 @@ import {
   type SelectResult,
 } from "@/hooks/use-programme";
 import { useTenant } from "@/hooks/use-tenant";
+import { composeFleetRows, fleetRepoKey } from "@/lib/fleet-rows";
 import { composeOnboardingVerdict, type SelectOutcome } from "@/lib/onboarding-verdict";
 import { useTranslation, t } from "@/lib/i18n";
 
 function outcomeLabel(outcome: SelectOutcome): string {
   return t(`fleet.outcomes.${outcome}`);
+}
+
+function cell(value: string | null): string {
+  return value ?? "—";
 }
 
 export function OnboardingFlow() {
@@ -37,17 +40,27 @@ export function OnboardingFlow() {
   const refreshReadiness = useRefreshReadiness();
   const deselect = useDeselectRepo();
 
-  const [org, setOrg] = useState("");
-  const [repo, setRepo] = useState("");
   const [lastSelect, setLastSelect] = useState<SelectResult | null>(null);
   const [lastReadiness, setLastReadiness] = useState<ReadinessResponse | null>(null);
   const [activeRepos, setActiveRepos] = useState<{ org: string; repo: string }[]>([]);
+  const tenantRepos = useMemo(() => tenant?.repos ?? [], [tenant?.repos]);
 
   useEffect(() => {
-    if (tenant?.repos?.length) {
-      setActiveRepos(tenant.repos);
+    if (tenantRepos.length) {
+      setActiveRepos(tenantRepos);
     }
-  }, [tenant?.repos]);
+  }, [tenantRepos]);
+
+  const autoConnectTried = useRef(false);
+  const connectionMissing =
+    !connectionQuery.isLoading && !connectionQuery.error && !connectionQuery.connection;
+
+  useEffect(() => {
+    if (connectionMissing && !autoConnectTried.current) {
+      autoConnectTried.current = true;
+      connect.mutate({});
+    }
+  }, [connectionMissing, connect]);
 
   const verdict = useMemo(() => {
     if (!lastSelect) return null;
@@ -63,144 +76,57 @@ export function OnboardingFlow() {
   }, [lastSelect, lastReadiness]);
 
   const connection = connectionQuery.connection;
+  const rows = useMemo(
+    () => composeFleetRows(activeRepos, catalogueQuery.catalogue?.candidates ?? []),
+    [activeRepos, catalogueQuery.catalogue?.candidates],
+  );
+
+  function admit(org: string, repo: string) {
+    setLastSelect(null);
+    setLastReadiness(null);
+    selectRepos.mutate([{ org, repo }], {
+      onSuccess: (data) => {
+        setActiveRepos(data.active_repos);
+        const result = data.results[0];
+        if (!result) return;
+        setLastSelect(result);
+        if (result.outcome === "ok" || result.outcome === "already_selected") {
+          refreshReadiness.mutate({ org, repo }, { onSuccess: (ready) => setLastReadiness(ready) });
+        }
+      },
+    });
+  }
+
+  function refreshReady(org: string, repo: string) {
+    setLastSelect({
+      org,
+      repo,
+      outcome: "already_selected",
+    });
+    refreshReadiness.mutate({ org, repo }, { onSuccess: (ready) => setLastReadiness(ready) });
+  }
+
+  const actionError =
+    selectRepos.error ?? refreshCatalogue.error ?? refreshReadiness.error ?? deselect.error;
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <h2 className="mb-4 font-medium">{tf("active.title")}</h2>
-        {activeRepos.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{tf("active.empty")}</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {activeRepos.map((r) => (
-              <li
-                key={`${r.org}/${r.repo}`}
-                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
-              >
-                <span>
-                  {r.org}/{r.repo}
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={refreshReadiness.isPending}
-                    onClick={() => {
-                      setLastSelect({
-                        org: r.org,
-                        repo: r.repo,
-                        outcome: "already_selected",
-                      });
-                      refreshReadiness.mutate(
-                        { org: r.org, repo: r.repo },
-                        { onSuccess: (ready) => setLastReadiness(ready) },
-                      );
-                    }}
-                  >
-                    {tf("readiness.refresh")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={deselect.isPending}
-                    onClick={() =>
-                      deselect.mutate(
-                        { org: r.org, repo: r.repo },
-                        { onSuccess: (data) => setActiveRepos(data.active_repos) },
-                      )
-                    }
-                  >
-                    {tf("deselect")}
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-        {deselect.error ? (
-          <p className="mt-2 text-sm text-danger" role="alert">
-            {deselect.error.message}
-          </p>
-        ) : null}
-      </Card>
-
-      <Card>
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <h2 className="font-medium">{tf("catalogue.title")}</h2>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!connection || refreshCatalogue.isPending}
-            onClick={() => refreshCatalogue.mutate()}
-          >
-            {tf("catalogue.refresh")}
-          </Button>
-        </div>
-        {!connection ? (
-          <p className="text-sm text-muted-foreground">{tf("catalogue.needsConnection")}</p>
-        ) : catalogueQuery.isLoading ? (
-          <p className="text-sm text-muted-foreground">{tf("loading")}</p>
-        ) : !catalogueQuery.catalogue?.candidates.length ? (
-          <p className="text-sm text-muted-foreground">{tf("catalogue.empty")}</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {catalogueQuery.catalogue.candidates.map((c) => (
-              <li
-                key={`${c.org}/${c.repo}`}
-                className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"
-              >
-                <div>
-                  <p className="font-medium">
-                    {c.org}/{c.repo}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {c.service_key} · {c.status}
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  disabled={selectRepos.isPending || refreshReadiness.isPending}
-                  onClick={() => {
-                    setLastSelect(null);
-                    setLastReadiness(null);
-                    selectRepos.mutate([{ org: c.org, repo: c.repo }], {
-                      onSuccess: (data) => {
-                        setActiveRepos(data.active_repos);
-                        const result = data.results[0];
-                        if (!result) return;
-                        setLastSelect(result);
-                        if (result.outcome === "ok" || result.outcome === "already_selected") {
-                          refreshReadiness.mutate(
-                            { org: c.org, repo: c.repo },
-                            { onSuccess: (ready) => setLastReadiness(ready) },
-                          );
-                        }
-                      },
-                    });
-                  }}
-                >
-                  {tf("catalogue.select")}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-        {selectRepos.error || refreshCatalogue.error || refreshReadiness.error ? (
-          <p className="mt-2 text-sm text-danger" role="alert">
-            {(selectRepos.error ?? refreshCatalogue.error ?? refreshReadiness.error)?.message}
-          </p>
-        ) : null}
-      </Card>
+    <Card>
+      <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={!connection || refreshCatalogue.isPending}
+          onClick={() => refreshCatalogue.mutate()}
+        >
+          {tf("catalogue.refresh")}
+        </Button>
+      </div>
 
       {(lastSelect || verdict) && (
-        <Card>
-          <h2 className="mb-2 font-medium">{tf("verdict.label")}</h2>
+        <div className="mb-4 space-y-1 border-b border-border pb-4">
           {lastSelect ? (
-            <p className="mb-2 text-sm">
+            <p className="text-sm">
               {lastSelect.org}/{lastSelect.repo}: {outcomeLabel(lastSelect.outcome)}
             </p>
           ) : null}
@@ -218,81 +144,173 @@ export function OnboardingFlow() {
               {t(verdict.reasonKey)}
             </p>
           ) : null}
-        </Card>
+        </div>
       )}
 
-      <Card>
-        <h2 className="mb-4 font-medium">{tf("connection.title")}</h2>
+      <h2 className="mb-3 font-medium">{tf("catalogue.title")}</h2>
+      {!connection ? (
+        <p className="text-sm text-muted-foreground">{tf("catalogue.needsConnection")}</p>
+      ) : catalogueQuery.isLoading ? (
+        <p className="text-sm text-muted-foreground">{tf("loading")}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-muted-foreground">
+                <th className="py-2 pr-3 font-medium">{tf("list.columns.repo")}</th>
+                <th className="py-2 pr-3 font-medium">{tf("list.columns.service")}</th>
+                <th className="py-2 pr-3 font-medium">{tf("list.columns.status")}</th>
+                <th className="py-2 font-medium">{tf("list.columns.actions")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-border bg-muted">
+                <th
+                  colSpan={4}
+                  className="py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                >
+                  {tf("catalogue.block.inFleet")}
+                </th>
+              </tr>
+              {rows.active.length === 0 ? (
+                <tr className="border-b border-border">
+                  <td colSpan={4} className="py-3 text-muted-foreground">
+                    {tf("active.empty")}
+                  </td>
+                </tr>
+              ) : (
+                rows.active.map((row) => (
+                  <tr
+                    key={fleetRepoKey(row.org, row.repo)}
+                    className="border-b border-border bg-muted"
+                  >
+                    <td className="py-2 pr-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium">
+                          {row.org}/{row.repo}
+                        </span>
+                        <span className="inline-flex items-center rounded-full border border-ok bg-ok/10 px-2 py-0.5 text-xs font-medium text-ok">
+                          {tf("catalogue.badge.inFleet")}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-2 pr-3">{cell(row.serviceKey)}</td>
+                    <td className="py-2 pr-3">{cell(row.status)}</td>
+                    <td className="py-2">
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={refreshReadiness.isPending}
+                          onClick={() => refreshReady(row.org, row.repo)}
+                        >
+                          {tf("readiness.refresh")}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          disabled={deselect.isPending}
+                          onClick={() =>
+                            deselect.mutate(
+                              { org: row.org, repo: row.repo },
+                              { onSuccess: (data) => setActiveRepos(data.active_repos) },
+                            )
+                          }
+                        >
+                          {tf("deselect")}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+            <tbody>
+              <tr className="border-b border-border bg-surface-alt">
+                <th
+                  colSpan={4}
+                  className="py-2 text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                >
+                  {tf("catalogue.block.available")}
+                </th>
+              </tr>
+              {rows.candidates.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-3 text-muted-foreground">
+                    {tf("catalogue.empty")}
+                  </td>
+                </tr>
+              ) : (
+                rows.candidates.map((row) => (
+                  <tr key={fleetRepoKey(row.org, row.repo)} className="border-b border-border">
+                    <td className="py-2 pr-3">
+                      {row.org}/{row.repo}
+                    </td>
+                    <td className="py-2 pr-3">{cell(row.serviceKey)}</td>
+                    <td className="py-2 pr-3">{cell(row.status)}</td>
+                    <td className="py-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={selectRepos.isPending || refreshReadiness.isPending}
+                        onClick={() => admit(row.org, row.repo)}
+                      >
+                        {tf("catalogue.select")}
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {actionError ? (
+        <p className="mt-3 text-sm text-danger" role="alert">
+          {actionError.message}
+        </p>
+      ) : null}
+
+      <div className="mt-6 border-t border-border pt-4">
+        <h2 className="mb-2 text-sm font-medium">{tf("connection.title")}</h2>
         {connection ? (
-          <>
-            <dl className="mb-4 grid grid-cols-[10rem_1fr] gap-y-2 text-sm">
-              <dt className="text-muted-foreground">{tf("connection.org")}</dt>
-              <dd>
-                {connection.org}/{connection.repo}
-              </dd>
-              <dt className="text-muted-foreground">{tf("connection.lastSynced")}</dt>
-              <dd>{connection.last_synced_at}</dd>
-            </dl>
-            <p className="mb-3 text-sm text-muted-foreground">{tf("connection.resyncHint")}</p>
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+            <p className="text-muted-foreground">
+              {connection.org}/{connection.repo}
+              {" · "}
+              {tf("connection.lastSynced")} {connection.last_synced_at}
+            </p>
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
+              size="sm"
               disabled={connect.isPending}
-              onClick={() => connect.mutate({ org: connection.org, repo: connection.repo })}
+              onClick={() => connect.mutate({})}
             >
               {tf("connection.resync")}
             </Button>
-          </>
+          </div>
         ) : (
-          <>
-            <p className="mb-4 text-sm text-muted-foreground">{tf("connection.missing")}</p>
-            <form
-              className="grid max-w-xl gap-3 md:grid-cols-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                connect.mutate(
-                  { org: org.trim(), repo: repo.trim() },
-                  {
-                    onSuccess: () => {
-                      setOrg("");
-                      setRepo("");
-                    },
-                  },
-                );
-              }}
-            >
-              <div className="space-y-1">
-                <Label htmlFor="meta-org">{tf("connection.org")}</Label>
-                <Input
-                  id="meta-org"
-                  value={org}
-                  onChange={(e) => setOrg(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="meta-repo">{tf("connection.repo")}</Label>
-                <Input
-                  id="meta-repo"
-                  value={repo}
-                  onChange={(e) => setRepo(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Button type="submit" disabled={connect.isPending}>
-                  {tf("connection.submit")}
-                </Button>
-              </div>
-            </form>
-          </>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              {connect.isPending ? tf("connection.connecting") : tf("connection.missing")}
+            </p>
+            {connect.isError ? (
+              <Button type="button" variant="outline" size="sm" onClick={() => connect.mutate({})}>
+                {tf("connection.retry")}
+              </Button>
+            ) : null}
+          </div>
         )}
         {connect.error ? (
           <p className="mt-2 text-sm text-danger" role="alert">
             {connect.error.message}
           </p>
         ) : null}
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }

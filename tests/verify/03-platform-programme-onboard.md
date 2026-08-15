@@ -24,8 +24,8 @@ Live smoke against **real gateflow**. Unit ownership:
 ## Steps
 
 1. Sign in on `/login` as **platform_admin**.
-2. Confirm left nav shows **System status**, **Programmes**, and **Identities** —
-   not Tenant / Fleet (REQ-36).
+2. Confirm left nav shows **Programmes** and **Identities** — not Tenant /
+   Fleet / System status (REQ-36). `/` redirects to Programmes.
 3. Open **Programmes** (`/programmes`): list renders (empty state OK) (REQ-32).
 4. Click **Onboard programme** (`/programmes/new`). Submit validate-then-create
    with name + meta org/repo + PAT only — **no** workspace or meta-ref field (REQ-33).

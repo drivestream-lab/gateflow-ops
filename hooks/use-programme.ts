@@ -65,12 +65,12 @@ async function programmeFetch<T>(op: string, init?: RequestInit): Promise<T> {
 export function useProgrammeConnection(options?: { enabled?: boolean }) {
   const query = useQuery({
     queryKey: ["gateflow", "programme", "connection"],
-    queryFn: () => programmeFetch<ProgrammeConnection>("connection"),
+    queryFn: () => programmeFetch<{ connection: ProgrammeConnection | null }>("connection"),
     enabled: options?.enabled ?? true,
     retry: false,
   });
   return {
-    connection: query.data ?? null,
+    connection: query.data?.connection ?? null,
     isLoading: query.isPending,
     error:
       query.error instanceof Error
@@ -105,11 +105,12 @@ export function useProgrammeCatalogue(options?: { enabled?: boolean }) {
 export function useConnectProgramme() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: (body: { org: string; repo: string }) =>
+    // Input-free connect: empty body — gateflow uses the programme's onboarded meta.
+    mutationFn: (body?: { org?: string; repo?: string }) =>
       programmeFetch<{ connection: ProgrammeConnection }>("connect", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ org: body.org, repo: body.repo }),
+        body: JSON.stringify(body?.org && body?.repo ? { org: body.org, repo: body.repo } : {}),
       }),
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ["gateflow", "programme"] });

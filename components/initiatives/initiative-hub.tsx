@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label";
 import {
   classifyWaveMapStatus,
   compositionGapLabel,
-  parseWaveTicketIds,
   useInitiativeOp,
   useInitiativesList,
   useStartClosure,
@@ -17,6 +16,13 @@ import {
   type InitiativeSummary,
   type WaveMapStatus,
 } from "@/hooks/use-initiatives";
+import { useTenant } from "@/hooks/use-tenant";
+import {
+  deriveRepoWorkspacePath,
+  fleetRepoKey,
+  waveIdsFromMap,
+  waveTicketIdsFromMap,
+} from "@/lib/initiative-derive";
 import { useTranslation } from "@/lib/i18n";
 
 function waveStatusClass(status: WaveMapStatus): string {
@@ -209,16 +215,37 @@ const READOUT_OPS: InitiativeByIdOp[] = [
   "closure",
 ];
 
+const WAVE_READOUTS = new Set<InitiativeByIdOp>(["implementation", "closeout", "merge"]);
+
 export function InitiativeHub() {
   const { t } = useTranslation("initiatives");
-  const [filters, setFilters] = useState({ org: "", repo: "" });
-  const [applied, setApplied] = useState(filters);
+  const tenant = useTenant();
+  const repos = useMemo(() => tenant.tenant?.repos ?? [], [tenant.tenant?.repos]);
+
+  const [selectedRepo, setSelectedRepo] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [readoutOp, setReadoutOp] = useState<InitiativeByIdOp>("spec");
   const [waveId, setWaveId] = useState("");
-  const [readoutArmed, setReadoutArmed] = useState(false);
+  const [closureForm, setClosureForm] = useState({
+    branch_slug: "closure",
+    runner: "",
+    model_id: "",
+  });
+  const [closureAck, setClosureAck] = useState<string | null>(null);
+  const [closureLocalError, setClosureLocalError] = useState<string | null>(null);
 
-  const list = useInitiativesList(applied);
+  useEffect(() => {
+    if (!selectedRepo && repos[0]) {
+      setSelectedRepo(fleetRepoKey(repos[0].org, repos[0].repo));
+    }
+  }, [repos, selectedRepo]);
+
+  const [org, repo] = useMemo(() => {
+    const [o, r] = selectedRepo.split("/");
+    return [o ?? "", r ?? ""];
+  }, [selectedRepo]);
+
+  const list = useInitiativesList({ org, repo });
   const selected = useMemo(
     () => list.initiatives.find((i) => i.initiativeId === selectedId) ?? null,
     [list.initiatives, selectedId],
@@ -227,230 +254,217 @@ export function InitiativeHub() {
   const waves = useInitiativeOp(
     {
       initiativeId: selectedId,
-      org: applied.org,
-      repo: applied.repo,
+      org,
+      repo,
       op: "waves",
     },
-    { enabled: Boolean(selectedId) },
+    { enabled: Boolean(selectedId && org && repo) },
   );
+
+  const mapWaveIds = useMemo(() => waveIdsFromMap(waves.payload?.data), [waves.payload?.data]);
+  const mapTicketIds = useMemo(
+    () => waveTicketIdsFromMap(waves.payload?.data),
+    [waves.payload?.data],
+  );
+
+  useEffect(() => {
+    if (mapWaveIds[0] && !mapWaveIds.includes(waveId)) {
+      setWaveId(mapWaveIds[0]);
+    }
+  }, [mapWaveIds, waveId]);
 
   const readout = useInitiativeOp(
     {
       initiativeId: selectedId,
-      org: applied.org,
-      repo: applied.repo,
+      org,
+      repo,
       op: readoutOp,
       waveId,
     },
-    { enabled: readoutArmed && Boolean(selectedId) },
+    { enabled: Boolean(selectedId && org && repo) },
   );
 
   const startClosure = useStartClosure();
-  const [closureForm, setClosureForm] = useState({
-    initiative_id: "",
-    epic_ticket_id: "",
-    wave_ticket_ids: "",
-    workspace: "",
-    branch_slug: "",
-    base_branch: "develop",
-    runner: "",
-    model_id: "",
-    org: "",
-    repo: "",
-  });
-  const [closureAck, setClosureAck] = useState<string | null>(null);
-
-  function patchClosure(key: keyof typeof closureForm, value: string) {
-    setClosureForm((prev) => ({ ...prev, [key]: value }));
-  }
+  const workspacePath = deriveRepoWorkspacePath(tenant.tenant?.workspaceRoot, org, repo);
 
   function selectInitiative(item: InitiativeSummary) {
     setSelectedId(item.initiativeId);
-    setReadoutArmed(false);
-    setClosureForm((prev) => ({
-      ...prev,
-      initiative_id: item.initiativeId,
-      epic_ticket_id: item.epicTicketId ?? prev.epic_ticket_id,
-      org: applied.org || prev.org,
-      repo: applied.repo || prev.repo,
-    }));
+    setClosureAck(null);
+    setClosureLocalError(null);
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <h2 className="mb-4 font-medium">{t("filters.title")}</h2>
-        <form
-          className="grid max-w-2xl gap-3 md:grid-cols-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setApplied({ ...filters });
+    <Card>
+      <div className="mb-4 max-w-sm space-y-1">
+        <Label htmlFor="init-repo">{t("filters.repo")}</Label>
+        <select
+          id="init-repo"
+          className="flex h-9 w-full rounded-md border border-border bg-background px-3 text-sm"
+          value={selectedRepo}
+          onChange={(e) => {
+            setSelectedRepo(e.target.value);
             setSelectedId(null);
-            setReadoutArmed(false);
+            setWaveId("");
           }}
         >
-          <div className="space-y-1">
-            <Label htmlFor="init-org">{t("filters.org")}</Label>
-            <Input
-              id="init-org"
-              value={filters.org}
-              onChange={(e) => setFilters((p) => ({ ...p, org: e.target.value }))}
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="init-repo">{t("filters.repo")}</Label>
-            <Input
-              id="init-repo"
-              value={filters.repo}
-              onChange={(e) => setFilters((p) => ({ ...p, repo: e.target.value }))}
-            />
-          </div>
-          <div className="md:col-span-2">
-            <Button type="submit">{t("filters.apply")}</Button>
-          </div>
-        </form>
-      </Card>
+          <option value="">{t("filters.repoPlaceholder")}</option>
+          {repos.map((row) => (
+            <option key={fleetRepoKey(row.org, row.repo)} value={fleetRepoKey(row.org, row.repo)}>
+              {row.org}/{row.repo}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <Card>
-        <h2 className="mb-4 font-medium">{t("list.title")}</h2>
-        {list.isLoading ? (
-          <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        ) : list.error ? (
-          <p className="text-sm text-danger">{list.error.message}</p>
-        ) : !applied.org || !applied.repo ? (
-          <p className="text-sm text-muted-foreground">{t("detail.selectPrompt")}</p>
-        ) : list.initiatives.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("list.empty")}</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[36rem] text-left text-sm">
-              <thead>
-                <tr className="border-b border-border text-muted-foreground">
-                  <th className="py-2 pr-3 font-medium">{t("list.columns.id")}</th>
-                  <th className="py-2 pr-3 font-medium">{t("list.columns.name")}</th>
-                  <th className="py-2 pr-3 font-medium">{t("list.columns.stage")}</th>
-                  <th className="py-2 pr-3 font-medium">{t("list.columns.prd")}</th>
-                  <th className="py-2 font-medium">{t("list.columns.epic")}</th>
+      {repos.length === 0 && !tenant.isLoading ? (
+        <p className="text-sm text-muted-foreground">{t("filters.emptyFleet")}</p>
+      ) : list.isLoading ? (
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
+      ) : list.error ? (
+        <p className="text-sm text-danger">{list.error.message}</p>
+      ) : !org || !repo ? (
+        <p className="text-sm text-muted-foreground">{t("filters.repoPlaceholder")}</p>
+      ) : list.initiatives.length === 0 ? (
+        <p className="text-sm text-muted-foreground">{t("list.empty")}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[36rem] text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-muted-foreground">
+                <th className="py-2 pr-3 font-medium">{t("list.columns.id")}</th>
+                <th className="py-2 pr-3 font-medium">{t("list.columns.name")}</th>
+                <th className="py-2 pr-3 font-medium">{t("list.columns.stage")}</th>
+                <th className="py-2 pr-3 font-medium">{t("list.columns.prd")}</th>
+                <th className="py-2 font-medium">{t("list.columns.epic")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.initiatives.map((item) => (
+                <tr
+                  key={item.initiativeId}
+                  className={
+                    item.initiativeId === selectedId
+                      ? "border-b border-border bg-muted"
+                      : "border-b border-border"
+                  }
+                >
+                  <td className="py-2 pr-3 font-mono text-xs">{item.initiativeId}</td>
+                  <td className="py-2 pr-3">{item.name}</td>
+                  <td className="py-2 pr-3">{gapText(item.currentStage, t)}</td>
+                  <td className="py-2 pr-3">{gapText(item.prdApproval, t)}</td>
+                  <td className="py-2">
+                    <Button
+                      type="button"
+                      variant={item.initiativeId === selectedId ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => selectInitiative(item)}
+                    >
+                      {t("list.open")}
+                    </Button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {list.initiatives.map((item) => (
-                  <tr key={item.initiativeId} className="border-b border-border/60">
-                    <td className="py-2 pr-3 font-mono text-xs">{item.initiativeId}</td>
-                    <td className="py-2 pr-3">{item.name}</td>
-                    <td className="py-2 pr-3">{gapText(item.currentStage, t)}</td>
-                    <td className="py-2 pr-3">{gapText(item.prdApproval, t)}</td>
-                    <td className="py-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => selectInitiative(item)}
-                      >
-                        {t("list.open")}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      <Card>
-        <h2 className="mb-4 font-medium">{t("detail.title")}</h2>
-        <DetailPanel item={selected} org={applied.org} repo={applied.repo} t={t} />
-      </Card>
+      <h2 className="mb-3 mt-6 font-medium">{t("detail.title")}</h2>
+      <DetailPanel item={selected} org={org} repo={repo} t={t} />
 
-      <Card>
-        <h2 className="mb-4 font-medium">{t("waves.title")}</h2>
-        {!selectedId ? (
-          <p className="text-sm text-muted-foreground">{t("detail.selectPrompt")}</p>
-        ) : waves.isLoading ? (
-          <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        ) : waves.error ? (
-          <p className="text-sm text-danger">{waves.error.message}</p>
-        ) : (
-          <WaveRows data={waves.payload?.data} t={t} />
-        )}
-      </Card>
+      <h2 className="mb-3 mt-6 font-medium">{t("waves.title")}</h2>
+      {!selectedId ? (
+        <p className="text-sm text-muted-foreground">{t("detail.selectPrompt")}</p>
+      ) : waves.isLoading ? (
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
+      ) : waves.error ? (
+        <p className="text-sm text-danger">{waves.error.message}</p>
+      ) : (
+        <WaveRows data={waves.payload?.data} t={t} />
+      )}
 
-      <Card>
-        <h2 className="mb-4 font-medium">{t("readout.title")}</h2>
-        <form
-          className="mb-4 grid max-w-3xl gap-3 md:grid-cols-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setReadoutArmed(true);
-          }}
-        >
+      <h2 className="mb-3 mt-6 font-medium">{t("readout.title")}</h2>
+      <div className="mb-4 grid max-w-3xl gap-3 md:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="readout-op">{t("readout.op")}</Label>
+          <select
+            id="readout-op"
+            className="flex h-9 w-full rounded-md border border-border bg-background px-3 text-sm"
+            value={readoutOp}
+            onChange={(e) => setReadoutOp(e.target.value as InitiativeByIdOp)}
+          >
+            {READOUT_OPS.map((op) => (
+              <option key={op} value={op}>
+                {t(`readout.op.${op}`)}
+              </option>
+            ))}
+          </select>
+        </div>
+        {WAVE_READOUTS.has(readoutOp) ? (
           <div className="space-y-1">
-            <Label htmlFor="readout-op">{t("readout.op")}</Label>
+            <Label htmlFor="readout-wave">{t("readout.waveId")}</Label>
             <select
-              id="readout-op"
+              id="readout-wave"
               className="flex h-9 w-full rounded-md border border-border bg-background px-3 text-sm"
-              value={readoutOp}
-              onChange={(e) => {
-                setReadoutOp(e.target.value as InitiativeByIdOp);
-                setReadoutArmed(false);
-              }}
+              value={waveId}
+              onChange={(e) => setWaveId(e.target.value)}
+              disabled={!selectedId || mapWaveIds.length === 0}
             >
-              {READOUT_OPS.map((op) => (
-                <option key={op} value={op}>
-                  {t(`readout.op.${op}`)}
+              <option value="">{t("readout.wavePlaceholder")}</option>
+              {mapWaveIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
                 </option>
               ))}
             </select>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="readout-wave">{t("readout.waveId")}</Label>
-            <Input
-              id="readout-wave"
-              value={waveId}
-              onChange={(e) => {
-                setWaveId(e.target.value);
-                setReadoutArmed(false);
-              }}
-            />
-          </div>
-          <div className="md:col-span-2">
-            <Button type="submit" disabled={!selectedId}>
-              {t("readout.load")}
-            </Button>
-          </div>
-        </form>
-        {readoutArmed && readout.isLoading ? (
-          <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        ) : readoutArmed && readout.error ? (
-          <p className="text-sm text-danger">{readout.error.message}</p>
-        ) : readoutArmed ? (
-          <JsonReadout data={readout.payload?.data} t={t} />
-        ) : (
-          <p className="text-sm text-muted-foreground">{t("readout.empty")}</p>
-        )}
-      </Card>
+        ) : null}
+      </div>
+      {!selectedId ? (
+        <p className="text-sm text-muted-foreground">{t("detail.selectPrompt")}</p>
+      ) : readout.isLoading ? (
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
+      ) : readout.error ? (
+        <p className="text-sm text-danger">{readout.error.message}</p>
+      ) : (
+        <JsonReadout data={readout.payload?.data} t={t} />
+      )}
 
-      <Card>
-        <h2 className="mb-2 font-medium">{t("closure.title")}</h2>
-        <p className="mb-4 text-sm text-muted-foreground">{t("closure.hint")}</p>
+      <h2 className="mb-2 mt-6 font-medium">{t("closure.title")}</h2>
+      <p className="mb-4 text-sm text-muted-foreground">{t("closure.hint")}</p>
+      {!selected ? (
+        <p className="text-sm text-muted-foreground">{t("closure.selectPrompt")}</p>
+      ) : (
         <form
-          className="grid max-w-3xl gap-3 md:grid-cols-2"
+          className="grid max-w-xl gap-3 md:grid-cols-2"
           onSubmit={(e) => {
             e.preventDefault();
             setClosureAck(null);
+            setClosureLocalError(null);
+            if (!selected.epicTicketId) {
+              setClosureLocalError(t("errors.missingEpic"));
+              return;
+            }
+            if (mapTicketIds.length === 0) {
+              setClosureLocalError(t("errors.missingWaveTickets"));
+              return;
+            }
+            if (!workspacePath) {
+              setClosureLocalError(t("errors.missingWorkspace"));
+              return;
+            }
             startClosure.mutate(
               {
-                initiative_id: closureForm.initiative_id.trim(),
-                epic_ticket_id: closureForm.epic_ticket_id.trim(),
-                wave_ticket_ids: parseWaveTicketIds(closureForm.wave_ticket_ids),
-                workspace: closureForm.workspace.trim(),
+                initiative_id: selected.initiativeId,
+                epic_ticket_id: selected.epicTicketId,
+                wave_ticket_ids: mapTicketIds,
+                workspace: workspacePath,
                 branch_slug: closureForm.branch_slug.trim(),
-                base_branch: closureForm.base_branch.trim(),
+                base_branch: "develop",
                 runner: closureForm.runner.trim(),
                 model_id: closureForm.model_id.trim(),
-                org: closureForm.org.trim(),
-                repo: closureForm.repo.trim(),
+                org,
+                repo,
               },
               {
                 onSuccess: (result) => {
@@ -460,40 +474,42 @@ export function InitiativeHub() {
             );
           }}
         >
-          {(
-            [
-              ["initiative_id", "closure.initiativeId"],
-              ["epic_ticket_id", "closure.epicTicketId"],
-              ["wave_ticket_ids", "closure.waveTicketIds"],
-              ["workspace", "closure.workspace"],
-              ["branch_slug", "closure.branchSlug"],
-              ["base_branch", "closure.baseBranch"],
-              ["runner", "closure.runner"],
-              ["model_id", "closure.modelId"],
-              ["org", "closure.org"],
-              ["repo", "closure.repo"],
-            ] as const
-          ).map(([key, labelKey]) => (
-            <div key={key} className="space-y-1">
-              <Label htmlFor={`closure-${key}`}>{t(labelKey)}</Label>
-              <Input
-                id={`closure-${key}`}
-                value={closureForm[key]}
-                onChange={(e) => patchClosure(key, e.target.value)}
-              />
-            </div>
-          ))}
+          <div className="space-y-1">
+            <Label htmlFor="closure-branch_slug">{t("closure.branchSlug")}</Label>
+            <Input
+              id="closure-branch_slug"
+              value={closureForm.branch_slug}
+              onChange={(e) => setClosureForm((p) => ({ ...p, branch_slug: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="closure-runner">{t("closure.runner")}</Label>
+            <Input
+              id="closure-runner"
+              value={closureForm.runner}
+              onChange={(e) => setClosureForm((p) => ({ ...p, runner: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <Label htmlFor="closure-model_id">{t("closure.modelId")}</Label>
+            <Input
+              id="closure-model_id"
+              value={closureForm.model_id}
+              onChange={(e) => setClosureForm((p) => ({ ...p, model_id: e.target.value }))}
+            />
+          </div>
           <div className="md:col-span-2 space-y-2">
             <Button type="submit" disabled={startClosure.isPending}>
               {t("closure.submit")}
             </Button>
+            {closureLocalError ? <p className="text-sm text-danger">{closureLocalError}</p> : null}
             {startClosure.error ? (
               <p className="text-sm text-danger">{startClosure.error.message}</p>
             ) : null}
             {closureAck ? <p className="text-sm text-ok">{closureAck}</p> : null}
           </div>
         </form>
-      </Card>
-    </div>
+      )}
+    </Card>
   );
 }

@@ -1,6 +1,6 @@
 {
   "page.title": "Runs",
-  "page.description": "Start wave lanes, inspect run timelines, and authorize forge external-action stops. Fleet admit is separate.",
+  "page.description": "Start wave lanes, inspect run timelines, authorize forge stops, and query checkpoints. Fleet admit is separate.",
   "filters.title": "Filters",
   "filters.initiativeId": "Initiative id",
   "filters.waveId": "Wave id",

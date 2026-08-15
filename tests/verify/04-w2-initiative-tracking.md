@@ -10,17 +10,19 @@ Live smoke against **real gateflow**. Unit ownership:
 - `AUTH_MODE=jwt-upstream`
 - `UPSTREAM_BASE_URL` → live gateflow base
 - Non-prod tenant with `TENANT_ADMIN` credentials
-- At least one org/repo with an initiative that has board EPIC + run history
-  (CAP-F composition source)
-- Lab-safe closure-start inputs when exercising REQ-21 (workspace absolute path,
-  epic + wave ticket ids, runner/model)
+- At least one **admitted fleet** org/repo with an initiative that has board
+  EPIC + run history (CAP-F composition source)
+- Lab-safe closure-start inputs when exercising REQ-21 (runner/model; workspace
+  is derived from tenant `workspace_root` + selected org/repo)
 - `npm run dev` (or production start) for gateflow-ops
 
 ## Steps
 
 1. Sign in on `/login` as **tenant_admin**.
 2. Open **Initiatives** (`/initiatives`) from nav (REQ-13 surface).
-3. Enter **org** + **repo** and load the list (REQ-13):
+3. Select an **admitted repo** from the dropdown (same fleet list as Board)
+   (REQ-13):
+   - List loads without typing org/repo.
    - Rows show id / name / stage / PRD approval from gateflow.
    - Missing or `unavailable` fields show honest gap labels — no invented
      board/GitHub values.
@@ -29,8 +31,8 @@ Live smoke against **real gateflow**. Unit ownership:
 5. **Wave map** (REQ-14): statuses render in
    `{done, ready-to-start, blocked, active}`; blocked rows show block reason
    when gateflow provides it; empty map is an honest empty state.
-6. **Readouts** — load each with the selected initiative (and wave id where
-   required):
+6. **Readouts** — pick each readout (wave comes from the wave-map dropdown
+   where required):
    - Spec (REQ-15)
    - Implementation (REQ-16) — requires wave id
    - Closeout (REQ-17) — requires wave id
@@ -38,13 +40,14 @@ Live smoke against **real gateflow**. Unit ownership:
    - Completion (REQ-19)
    - Closure preview (REQ-20) — pre/post purge lists as gateflow returns them
 7. **Start closure** when lab-safe (REQ-21):
-   - Submit closure form with required fields
+   - Operator only enters branch slug / runner / model
+   - Workspace, org/repo, initiative, EPIC, and wave ticket ids are derived
    - Success shows accepted enqueue with run id (202 semantics)
    - Failure surfaces a named error (no silent success / fabricated run)
 
 ## Negative checks
 
-- Missing org/repo → list does not invent initiatives.
+- Empty fleet / no repo selected → list does not invent initiatives.
 - Unknown initiative / upstream 404 → named error on detail/readout; no fake
   composition.
 - Platform admin session cannot use Initiatives (redirect / wrong-role).

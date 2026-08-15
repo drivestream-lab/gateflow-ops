@@ -6,65 +6,25 @@ import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { logRequestError, logRequestStart, logRequestSuccess } from "@/lib/bff-logging";
 import { env } from "@/lib/env";
 import { createApiLogger } from "@/lib/logging";
-import { getEnteredProgrammeContext, programmeContextCookieOptions } from "@/lib/programme-context";
+import {
+  getEnteredProgrammeContext,
+  lastProgrammeCookieOptions,
+  programmeContextCookieOptions,
+} from "@/lib/programme-context";
+import {
+  enterUpstreamRefuseKey,
+  enterWriteRefuseKey,
+  lastProgrammeCookieValue,
+  snapshotEnteredProgramme,
+  snapshotGrants,
+  UPSTREAM_ENTER_PATH,
+  UPSTREAM_ME_PATH,
+  type EnterWriteInput,
+} from "@/lib/programme-enter";
 import { isPlatformAdmin, isTenantAdmin } from "@/lib/session-role";
 import { upstreamFetch } from "@/lib/upstream-fetch";
 
-export const UPSTREAM_MY_GRANTS_PATH = "/api/v1/grants";
-export const UPSTREAM_ENTER_PATH = "/api/v1/programme-context";
-
-export interface GrantedProgrammeDto {
-  programmeId: string;
-  tenantId: string;
-  programmeName: string | null;
-}
-
-export interface EnterWriteInput {
-  programmeId?: string;
-  password?: string;
-}
-
-export function enterWriteRefuseKey(input: EnterWriteInput): string | null {
-  if (input.password) return "programmes.errors.passwordNotAllowed";
-  if (!input.programmeId?.trim()) return "programmes.errors.notGranted";
-  return null;
-}
-
-/** Whitelist DTO — never copies password or token fields. */
-export function stripGrantedProgramme(raw: unknown): GrantedProgrammeDto | null {
-  if (!raw || typeof raw !== "object") return null;
-  const rec = raw as Record<string, unknown>;
-  const programmeId = rec.programme_id ?? rec.programmeId;
-  const tenantId = rec.tenant_id ?? rec.tenantId;
-  if (typeof programmeId !== "string" || !programmeId) return null;
-  if (typeof tenantId !== "string" || !tenantId) return null;
-  const programmeName =
-    typeof rec.programme_name === "string"
-      ? rec.programme_name
-      : typeof rec.programmeName === "string"
-        ? rec.programmeName
-        : null;
-  return { programmeId, tenantId, programmeName };
-}
-
-export function enterUpstreamRefuseKey(status: number, raw: unknown): string {
-  if (status === 403) return "programmes.errors.wrongActor";
-  const text =
-    raw && typeof raw !== "object"
-      ? String(raw).toLowerCase()
-      : raw && typeof raw === "object"
-        ? JSON.stringify(raw).toLowerCase()
-        : "";
-  if (status === 404 || status === 400) {
-    if (text.includes("grant") || text.includes("not granted") || text.includes("programme")) {
-      return "programmes.errors.notGranted";
-    }
-    return "programmes.errors.notGranted";
-  }
-  return "programmes.errors.actionFailed";
-}
-
-function contextCookieValue(programmeId: string, tenantId: string): string {
+function contextCookieValue(programmeId: string, tenantId: string | null): string {
   return JSON.stringify({ programmeId, tenantId });
 }
 
@@ -89,21 +49,19 @@ export async function GET(request: NextRequest) {
   const startTime = logRequestStart(logger);
 
   try {
-    const res = await upstreamFetch(UPSTREAM_MY_GRANTS_PATH, { correlationId });
+    const res = await upstreamFetch(UPSTREAM_ME_PATH, { correlationId });
     if (!res.ok) {
       const raw = await res.json().catch(() => null);
-      logRequestError(logger, startTime, `upstream ${res.status}`, mapUpstreamStatus(res.status));
+      logRequestError(
+        logger,
+        startTime,
+        `upstream ${res.status}: ${JSON.stringify(raw)?.slice(0, 300) ?? ""}`,
+        mapUpstreamStatus(res.status),
+      );
       return bffError(mapUpstreamStatus(res.status), enterUpstreamRefuseKey(res.status, raw));
     }
     const raw = (await res.json()) as unknown;
-    const list = Array.isArray(raw)
-      ? raw
-      : raw && typeof raw === "object" && Array.isArray((raw as { grants?: unknown }).grants)
-        ? (raw as { grants: unknown[] }).grants
-        : [];
-    const programmes = list
-      .map(stripGrantedProgramme)
-      .filter((item): item is GrantedProgrammeDto => item !== null);
+    const programmes = snapshotGrants(raw);
     const entered = await getEnteredProgrammeContext();
     logRequestSuccess(logger, startTime, 200);
     return NextResponse.json({
@@ -139,6 +97,7 @@ export async function POST(request: NextRequest) {
 
   const refuse = enterWriteRefuseKey(body);
   if (refuse) return bffError(400, refuse);
+  const programmeId = body.programmeId?.trim() ?? "";
 
   const correlationId = request.headers.get("x-correlation-id") ?? crypto.randomUUID();
   const logger = createApiLogger(request.method, request.url, correlationId, {
@@ -151,18 +110,23 @@ export async function POST(request: NextRequest) {
     const res = await upstreamFetch(UPSTREAM_ENTER_PATH, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ programme_id: body.programmeId?.trim() }),
+      body: JSON.stringify({ programme_id: programmeId }),
       correlationId,
     });
     if (!res.ok) {
       const raw = await res.json().catch(() => null);
-      logRequestError(logger, startTime, `upstream ${res.status}`, mapUpstreamStatus(res.status));
+      logRequestError(
+        logger,
+        startTime,
+        `upstream ${res.status}: ${JSON.stringify(raw)?.slice(0, 300) ?? ""}`,
+        mapUpstreamStatus(res.status),
+      );
       return bffError(mapUpstreamStatus(res.status), enterUpstreamRefuseKey(res.status, raw));
     }
     const raw = (await res.json().catch(() => ({}))) as unknown;
-    const dto = stripGrantedProgramme(raw);
+    const dto = snapshotEnteredProgramme(raw, programmeId);
     if (!dto) {
-      logRequestError(logger, startTime, "enter response missing ids", 502);
+      logRequestError(logger, startTime, "enter response missing entered programme", 502);
       return bffError(502, "common.errors.upstreamUnavailable");
     }
     const response = NextResponse.json({
@@ -175,6 +139,13 @@ export async function POST(request: NextRequest) {
       contextCookieValue(dto.programmeId, dto.tenantId),
       programmeContextCookieOptions(),
     );
+    if (typeof gate.sub === "string" && gate.sub) {
+      response.cookies.set(
+        env.LAST_PROGRAMME_COOKIE,
+        lastProgrammeCookieValue({ sub: gate.sub, programmeId: dto.programmeId }),
+        lastProgrammeCookieOptions(),
+      );
+    }
     logRequestSuccess(logger, startTime, 200);
     return response;
   } catch (error) {

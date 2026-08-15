@@ -25,17 +25,19 @@ Live smoke against **real gateflow** (not the chassis echo). Unit ownership:
    - Tenant detail shows id/name/workspace for the **session tenant** (REQ-01).
    - Confirm there is **no** invite / teammate-attach control (017 REQ-20 supersedes 016 invite).
 3. Open **Fleet** (`/fleet`):
-   - **Active fleet** is the lead section (may be empty).
+   - One Card, one **Catalogue** table with two blocks: **In fleet** (highlighted)
+     then **Available**.
    - If disconnected: connect with meta **org/repo only** (no git ref field) (REQ-04).
-   - If already connected: **Re-sync meta** is available; catalogue is unlocked.
-   - Catalogue list renders; refresh updates candidates (REQ-03).
-4. Admit one catalogue candidate (**Admit to fleet**) (REQ-05):
+   - If already connected: **Re-sync meta** is in the card footer; catalogue is unlocked.
+   - Catalogue table renders; refresh updates candidates (REQ-03).
+4. Admit one catalogue candidate (**Admit**) (REQ-05):
+   - The row moves into the **In fleet** block and is highlighted.
    - Outcome text is operator-readable (not a raw enum only).
    - Confirm this is **fleet onboard** — the page does **not** start a wave
      (waves remain CAP-C / W1).
 5. Readiness refresh runs (REQ-06); UI shows a **single** pass/fail **fleet onboard**
    verdict with no partial membership state (REQ-07).
-6. Deselect the admitted repo; it leaves the active fleet list (REQ-08).
+6. **Detach** the admitted repo; it returns to the **Available** block (REQ-08).
 7. Confirm left nav + page header/body chrome is shared — pages do not invent parallel shell chrome.
 
 ## Negative checks
