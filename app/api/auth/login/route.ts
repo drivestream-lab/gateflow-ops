@@ -7,6 +7,7 @@
 // AUTH_MODE=jwt-upstream → forwards credentials to gateflow POST /api/auth/login
 //                         and stores the JWT it returns.
 import { NextRequest, NextResponse } from "next/server";
+import { decodeJwtPayload } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { bffError, mapUpstreamStatus } from "@/lib/bff";
 import { createApiLogger } from "@/lib/logging";
@@ -16,7 +17,16 @@ import {
   toUpstreamLoginBody,
   UPSTREAM_AUTH_LOGIN_PATH,
 } from "@/lib/auth-login-upstream";
-import { programmeContextCookieOptions } from "@/lib/programme-context";
+import { lastProgrammeCookieOptions, programmeContextCookieOptions } from "@/lib/programme-context";
+import {
+  lastProgrammeCookieValue,
+  parseLastProgrammeCookie,
+  pickAutoEnterProgramme,
+  snapshotEnteredProgramme,
+  snapshotGrants,
+  UPSTREAM_ENTER_PATH,
+  UPSTREAM_ME_PATH,
+} from "@/lib/programme-enter";
 
 function devStubToken(email: string): string {
   const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
@@ -75,6 +85,49 @@ export async function POST(request: NextRequest) {
     ...programmeContextCookieOptions(),
     maxAge: 0,
   });
+  await restoreEnteredProgramme(request, response, token);
   logger.info("session established");
   return response;
+}
+
+/**
+ * Best-effort auto-enter after login (CTR-04): remembered programme for the
+ * same identity when still granted, else the single grant. Never fails login.
+ */
+async function restoreEnteredProgramme(
+  request: NextRequest,
+  response: NextResponse,
+  token: string,
+): Promise<void> {
+  if (env.AUTH_MODE === "dev-stub") return;
+  const sub = decodeJwtPayload(token)?.sub;
+  if (typeof sub !== "string" || !sub) return;
+  const last = parseLastProgrammeCookie(request.cookies.get(env.LAST_PROGRAMME_COOKIE)?.value);
+  try {
+    const meRes = await upstreamFetch(UPSTREAM_ME_PATH, { token });
+    if (!meRes.ok) return;
+    const target = pickAutoEnterProgramme(snapshotGrants(await meRes.json()), last, sub);
+    if (!target) return;
+    const enterRes = await upstreamFetch(UPSTREAM_ENTER_PATH, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ programme_id: target.programmeId }),
+      token,
+    });
+    if (!enterRes.ok) return;
+    const dto = snapshotEnteredProgramme(await enterRes.json(), target.programmeId);
+    if (!dto) return;
+    response.cookies.set(
+      env.PROGRAMME_CONTEXT_COOKIE,
+      JSON.stringify({ programmeId: dto.programmeId, tenantId: dto.tenantId }),
+      programmeContextCookieOptions(),
+    );
+    response.cookies.set(
+      env.LAST_PROGRAMME_COOKIE,
+      lastProgrammeCookieValue({ sub, programmeId: dto.programmeId }),
+      lastProgrammeCookieOptions(),
+    );
+  } catch {
+    // auto-restore is best-effort — the session itself is already established
+  }
 }

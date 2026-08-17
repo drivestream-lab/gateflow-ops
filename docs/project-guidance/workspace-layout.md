@@ -14,18 +14,19 @@ Every authenticated route uses the same chrome. Pages fill **slots**; they do
 not invent their own outer grid.
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│  App chrome (product mark · session · global actions)       │  ← layout once
-├──────────────┬──────────────────────────────┬───────────────┤
-│              │  Page header                 │               │
-│  Left nav    │  title · breadcrumb · CTAs   │  Context      │
-│  (primary)   ├──────────────────────────────┤  panel        │
-│              │                              │  (optional)   │
-│              │  Page body                   │               │
-│              │  feature content only        │               │
-│              │                              │               │
-└──────────────┴──────────────────────────────┴───────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│  Mark (sidebar)     [Programme switcher]          [health] [user]│
+├────────────┬─────────────────────────────────────────────────────┤
+│  Grouped   │  Page header (title · one primary CTA)              │
+│  nav       ├─────────────────────────────────────────────────────┤
+│            │  Page body — one work surface                       │
+└────────────┴─────────────────────────────────────────────────────┘
 ```
+
+`/` is a **role-home redirect**, not a System status page. Health is chrome
+(`ChromeHealth`). Programme enter/leave is the switcher (`ProgrammeSwitcher`).
+Tenant facts are a deep link from the switcher, not a nav row. Checkpoints
+render on Runs; `/checkpoints` redirects.
 
 | Region            | Purpose                                                   | Persist across routes?      |
 | ----------------- | --------------------------------------------------------- | --------------------------- |

@@ -3,14 +3,16 @@
 Source of truth for **what this portal does**. Conventional files
 (referenced by the rules — create as the product takes shape):
 
-| File                                                                     | Content                                                                             |
-| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| `00-service-profile.md`                                                  | Canonical upstream service names (BFF folders match these)                          |
-| `02-route-map.md`                                                        | Upstream route catalog; BFF module names derive from it                             |
-| `05-frontend-architecture.md`                                            | i18n namespace inventory, route groups                                              |
-| `06-logging.md`                                                          | Log modules and env flags                                                           |
-| [INIT-GATEFLOW-016-gateflow-ops.md](./INIT-GATEFLOW-016-gateflow-ops.md) | Mission Control v0 — CAP-A–G (Draft — Gate 1 from meta PR #41)                      |
-| [INIT-GATEFLOW-017-gateflow-ops.md](./INIT-GATEFLOW-017-gateflow-ops.md) | One human, many programmes, one login — CAP-01–06 (Draft — Gate 1 from meta PR #42) |
+| File                                                                               | Content                                                                                                                      |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `00-service-profile.md`                                                            | Canonical upstream service names (BFF folders match these)                                                                   |
+| `02-route-map.md`                                                                  | Upstream route catalog; BFF module names derive from it                                                                      |
+| `05-frontend-architecture.md`                                                      | i18n namespace inventory, route groups                                                                                       |
+| `06-logging.md`                                                                    | Log modules and env flags                                                                                                    |
+| [INIT-GATEFLOW-016-gateflow-ops.md](./INIT-GATEFLOW-016-gateflow-ops.md)           | Mission Control v0 — CAP-A–G (Draft — Gate 1 from meta PR #41)                                                               |
+| [INIT-GATEFLOW-017-gateflow-ops.md](./INIT-GATEFLOW-017-gateflow-ops.md)           | One human, many programmes, one login — CAP-01–06 (Draft — Gate 1 from meta PR #42)                                          |
+| [INIT-GATEFLOW-018-ops-portal-layout.md](./INIT-GATEFLOW-018-ops-portal-layout.md) | Ops portal layout — review draft (not Gate 1); plan in `../reports/Implementation-Plan-INIT-GATEFLOW-018.md`                 |
+| [INIT-GATEFLOW-019-gateflow-ops.md](./INIT-GATEFLOW-019-gateflow-ops.md)           | Lane start UX — Gate 1 skipped; blocked on gateflow 019 W1+W2; plan in `../reports/Implementation-Plan-INIT-GATEFLOW-019.md` |
 
 Capabilities and INIT slices land here via spec → harness. Decisions with
 alternatives → `../adr/`. Live status → `../as-built/`.

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { ChromeHealth } from "@/components/workspace/chrome-health";
+import { ProgrammeSwitcher } from "@/components/workspace/programme-switcher";
 import { WorkspaceNav } from "@/components/workspace/workspace-nav";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
@@ -23,6 +25,7 @@ export function WorkspaceShell({
 }: WorkspaceShellProps) {
   const { t } = useTranslation("workspace");
   const [navOpen, setNavOpen] = useState(false);
+  const showSwitcher = sessionRole === "tenant_admin";
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
@@ -61,6 +64,16 @@ export function WorkspaceShell({
             {t("chrome.menu")}
           </Button>
           <span className="font-medium text-accent">{productTitle}</span>
+        </div>
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2 md:px-6">
+          <div className="min-w-0">
+            {showSwitcher ? (
+              <ProgrammeSwitcher />
+            ) : (
+              <span className="text-sm text-muted-foreground">{productTitle}</span>
+            )}
+          </div>
+          <ChromeHealth />
         </div>
         <div className="flex min-h-0 flex-1 flex-col">{children}</div>
       </div>

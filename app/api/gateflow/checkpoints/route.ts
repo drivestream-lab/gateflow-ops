@@ -15,12 +15,12 @@ async function requireTenant(request: NextRequest) {
   if (!token) return { error: bffError(401, "auth.errors.sessionExpired") as Response };
   const payload = decodeJwtPayload(token);
   const entered = await getEnteredProgrammeContext();
-  const tenantId = entered?.tenantId;
-  if (typeof tenantId !== "string" || !tenantId) {
+  const programmeId = entered?.programmeId;
+  if (typeof programmeId !== "string" || !programmeId) {
     return { error: bffError(400, "checkpoints.errors.missingTenant") as Response };
   }
   const correlationId = request.headers.get("x-correlation-id") ?? crypto.randomUUID();
-  return { payload, tenantId, correlationId };
+  return { payload, programmeId, correlationId };
 }
 
 function checkpointErrorKey(status: number, upstreamBody: string): string {
@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
 
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-checkpoints-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 

@@ -4,11 +4,48 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authFetch } from "@/lib/auth-fetch";
 import { t } from "@/lib/i18n";
 
+export interface BoardTicketRow {
+  ticketId: string;
+  title: string | null;
+  ticketType: string | null;
+  state: string | null;
+  column: string | null;
+  initiativeId: string | null;
+  linkRef: string | null;
+}
+
+function strOrNull(value: unknown): string | null {
+  return typeof value === "string" && value ? value : null;
+}
+
+export function normalizeBoardTicket(raw: unknown): BoardTicketRow | null {
+  if (!raw || typeof raw !== "object") return null;
+  const rec = raw as Record<string, unknown>;
+  const ticketId = rec.ticket_id ?? rec.ticketId ?? rec.id;
+  if (typeof ticketId !== "string" || !ticketId) return null;
+  return {
+    ticketId,
+    title: strOrNull(rec.title),
+    ticketType: strOrNull(rec.ticket_type ?? rec.ticketType ?? rec.type),
+    state: strOrNull(rec.state),
+    column: strOrNull(rec.column),
+    initiativeId: strOrNull(rec.initiative_id ?? rec.initiativeId),
+    linkRef: strOrNull(rec.link_ref ?? rec.linkRef),
+  };
+}
+
+/** Fail-closed list — unknown shapes become an empty table, not invented rows. */
+export function boardTicketsFromListData(data: unknown): BoardTicketRow[] {
+  if (!data || typeof data !== "object") return [];
+  const rec = data as Record<string, unknown>;
+  const raw = rec.tickets ?? rec.items ?? (Array.isArray(data) ? data : null);
+  if (!Array.isArray(raw)) return [];
+  return raw.map(normalizeBoardTicket).filter((row): row is BoardTicketRow => row !== null);
+}
+
 /** Pure: detect empty ticket list (REQ-28). */
 export function isBoardTicketListEmpty(data: unknown): boolean {
-  if (!data || typeof data !== "object") return true;
-  const tickets = (data as { tickets?: unknown }).tickets;
-  return !Array.isArray(tickets) || tickets.length === 0;
+  return boardTicketsFromListData(data).length === 0;
 }
 
 /** Pure: create was an idempotent replay (REQ-29). */

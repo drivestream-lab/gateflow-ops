@@ -1,0 +1,7 @@
+{
+  "page.title": "Closeout lane",
+  "page.description": "Start closeout from a wave that already has an app PR.",
+  "start": "Start closeout",
+  "dialog.title": "Closeout lane inputs",
+  "dialog.submit": "Start closeout"
+}

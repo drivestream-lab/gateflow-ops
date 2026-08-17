@@ -22,10 +22,16 @@ describe("parseEnteredProgrammeContextCookie", () => {
     expect(parseEnteredProgrammeContextCookie("")).toBeNull();
   });
 
+  it("defaults tenantId to null when the cookie carries only a programmeId", () => {
+    expect(parseEnteredProgrammeContextCookie(JSON.stringify({ programmeId: "p" }))).toEqual({
+      programmeId: "p",
+      tenantId: null,
+    });
+  });
+
   it("returns null when the cookie is malformed", () => {
     expect(parseEnteredProgrammeContextCookie("not-json")).toBeNull();
     expect(parseEnteredProgrammeContextCookie("{}")).toBeNull();
-    expect(parseEnteredProgrammeContextCookie(JSON.stringify({ programmeId: "p" }))).toBeNull();
     expect(parseEnteredProgrammeContextCookie(JSON.stringify({ tenantId: "t" }))).toBeNull();
     expect(
       parseEnteredProgrammeContextCookie(JSON.stringify({ programmeId: "", tenantId: "t" })),

@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
   if (!token) return bffError(401, "auth.errors.sessionExpired");
   const payload = decodeJwtPayload(token);
   const entered = await getEnteredProgrammeContext();
-  const tenantId = entered?.tenantId;
-  if (typeof tenantId !== "string" || !tenantId) {
+  const programmeId = entered?.programmeId;
+  if (typeof programmeId !== "string" || !programmeId) {
     return bffError(400, "runs.errors.missingTenant");
   }
 
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-runs-forge-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 

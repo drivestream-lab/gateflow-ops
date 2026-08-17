@@ -5,9 +5,14 @@ vi.mock("server-only", () => ({}));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => undefined }) }));
 process.env.UPSTREAM_BASE_URL = "http://localhost:3000";
 
-const { identityCreateRefuseKey, stripIdentitySecrets, filterIdentitiesByQuery } =
-  await import("@/app/api/gateflow/identities/route");
-const { identityPasswordRefuseKey } = await import("@/app/api/gateflow/identities/by-id/route");
+const {
+  identityCreateRefuseKey,
+  identityCreateUpstreamBody,
+  identityPasswordRefuseKey,
+  stripIdentitySecrets,
+  filterIdentitiesByQuery,
+  upstreamActionMethod,
+} = await import("@/lib/identities-directory");
 
 describe("identityCreateRefuseKey", () => {
   it("refuses a missing name (REQ-25)", () => {
@@ -48,14 +53,41 @@ describe("identityPasswordRefuseKey", () => {
   });
 });
 
+describe("identityCreateUpstreamBody", () => {
+  it("maps portal name to gateflow display_name and sends no extra keys", () => {
+    const body = identityCreateUpstreamBody({
+      name: "kumar deepak",
+      email: "kd1@kd.com",
+      password: "user123$",
+    });
+    expect(body).toEqual({
+      display_name: "kumar deepak",
+      email: "kd1@kd.com",
+      password: "user123$",
+    });
+    // Gateflow IdentityEnterRequest is extra=forbid — these keys must never appear.
+    expect("name" in body).toBe(false);
+    expect("role" in body).toBe(false);
+  });
+});
+
+describe("upstreamActionMethod", () => {
+  it("uses PUT for password-set, POST for suspend/unsuspend", () => {
+    expect(upstreamActionMethod("password-set")).toBe("PUT");
+    expect(upstreamActionMethod("suspend")).toBe("POST");
+    expect(upstreamActionMethod("unsuspend")).toBe("POST");
+  });
+});
+
 describe("stripIdentitySecrets", () => {
-  it("omits password and token fields (REQ-30)", () => {
+  it("maps the gateflow IdentityReadModel shape and omits secrets (REQ-30)", () => {
     const dto = stripIdentitySecrets({
       id: "id-1",
-      name: "Ada",
+      display_name: "Ada",
       email: "ada@lab.example",
+      status: "active",
       role: "tenant_admin",
-      suspended: false,
+      grants: [],
       password: "should-not-leak",
       access_token: "tok",
     });
@@ -74,7 +106,7 @@ describe("stripIdentitySecrets", () => {
     expect(
       stripIdentitySecrets({
         identity_id: "id-2",
-        name: "Bea",
+        display_name: "Bea",
         credential_identifier: "bea@lab.example",
         status: "suspended",
       }),
@@ -87,8 +119,18 @@ describe("stripIdentitySecrets", () => {
     });
   });
 
+  it("falls back to the legacy name key", () => {
+    expect(stripIdentitySecrets({ id: "id-3", name: "Cid", email: "cid@lab.example" })).toEqual({
+      id: "id-3",
+      name: "Cid",
+      email: "cid@lab.example",
+      role: "tenant_admin",
+      suspended: false,
+    });
+  });
+
   it("returns null when required fields are missing", () => {
-    expect(stripIdentitySecrets({ name: "Ada" })).toBeNull();
+    expect(stripIdentitySecrets({ display_name: "Ada" })).toBeNull();
     expect(stripIdentitySecrets(null)).toBeNull();
   });
 });

@@ -71,15 +71,16 @@ async function handle(request: NextRequest, method: string) {
       upstream = await upstreamFetch(`${basePath(tenantId)}/catalogue`, { correlationId });
     } else if (method === "PUT" && op === "connect") {
       const body = await readJsonBody(request);
-      if (!body || typeof body !== "object") return bffError(400, "common.errors.badRequest");
-      const connectBody = body as { org?: unknown; repo?: unknown };
+      const connectBody = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
       const org = typeof connectBody.org === "string" ? connectBody.org.trim() : "";
       const repo = typeof connectBody.repo === "string" ? connectBody.repo.trim() : "";
-      if (!org || !repo) return bffError(400, "common.errors.badRequest");
+      // Input-free connect: gateflow defaults org/repo to the programme's
+      // onboarded meta repo; explicit values must match it upstream.
+      const payload = org && repo ? { org, repo } : {};
       upstream = await upstreamFetch(`${basePath(tenantId)}/connect`, {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ org, repo }),
+        body: JSON.stringify(payload),
         correlationId,
       });
     } else if (method === "POST" && op === "catalogue-refresh") {
@@ -119,10 +120,19 @@ async function handle(request: NextRequest, method: string) {
     }
 
     if (!upstream.ok) {
+      const raw = (await upstream.json().catch(() => null)) as {
+        error?: { details?: { reason?: string } };
+      } | null;
+      const reason = raw?.error?.details?.reason;
+      // Not-connected is data, not an error: the fleet page auto-connects.
+      if (method === "GET" && op === "connection" && reason === "programme_not_connected") {
+        logRequestSuccess(logger, startTime, 200);
+        return NextResponse.json({ connection: null });
+      }
       logRequestError(
         logger,
         startTime,
-        `upstream ${upstream.status}`,
+        `upstream ${upstream.status}: ${JSON.stringify(raw)?.slice(0, 300) ?? ""}`,
         mapUpstreamStatus(upstream.status),
       );
       return bffError(mapUpstreamStatus(upstream.status), "fleet.errors.actionFailed");
@@ -130,6 +140,9 @@ async function handle(request: NextRequest, method: string) {
 
     const data: unknown = await upstream.json();
     logRequestSuccess(logger, startTime, 200);
+    if (method === "GET" && op === "connection") {
+      return NextResponse.json({ connection: data });
+    }
     return NextResponse.json(data);
   } catch (error) {
     logRequestError(logger, startTime, error, 502);

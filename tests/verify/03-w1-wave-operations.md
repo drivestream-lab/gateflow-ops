@@ -18,7 +18,8 @@ Live smoke against **real gateflow**. Unit ownership:
 ## Steps
 
 1. Sign in on `/login` as **tenant_admin**.
-2. Open **Runs** (`/runs`) from nav (REQ-09 surface).
+2. Open **Runs** (`/runs`) from nav. Expand **Advanced — raw PE wave start**
+   (019: cockpit is no longer the primary start; Initiatives picker + wave map are).
 3. **Start wave** for each supported lane when lab fixtures allow (REQ-09):
    - Implement
    - Spec

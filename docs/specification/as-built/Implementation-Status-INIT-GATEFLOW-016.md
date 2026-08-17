@@ -14,7 +14,8 @@ Initiative detail. Index row lives in `implementation-status.md`.
 ## W0 notes
 
 - BFF: `app/api/gateflow/tenants`, `tenants/users`, `programme?op=…` (connect forwards `org`/`repo` only — no `ref`)
-- Fleet UI: active fleet → catalogue admit → meta connect/re-sync; admit ≠ wave start
+- Fleet UI: one Card — catalogue table with In fleet / Available blocks,
+  highlighted admitted rows + Detach, inline verdict, meta footer; admit ≠ wave start
 - Pure verdict: `lib/onboarding-verdict.ts` → pass\|fail fleet onboard only
 - Shell: `components/workspace/*` via `app/(dashboard)/layout.tsx`
 - Ground contracts for W1: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W0.md` §Contracts produced
@@ -43,9 +44,11 @@ Initiative detail. Index row lives in `implementation-status.md`.
 ## W2 notes (CAP-F)
 
 - BFF: `app/api/gateflow/initiatives` (list + `?op=closure-start`), `initiatives/by-id` (`?op=` detail/waves/spec/implementation/closeout/merge/completion/closure)
-- UI: `/initiatives` — `components/initiatives/initiative-hub.tsx`; nav `tenant_admin` → Initiatives
+- UI: 019 removed `/initiatives`. CAP-F BFF remains; operator surfaces are Spec / Implement / Closeout / Initiative closure lanes
+- Fleet-repo dropdown (same admitted list as Board); list loads without typed org/repo
 - Composition displayed as-is; gaps labeled empty/unavailable (no invented board/GitHub fields)
-- Closure start surfaces accepted enqueue (202) with run id
+- Closure start: workspace derived as `{workspace_root}/{org}/{repo}`; operator enters
+  branch slug / runner / model only; accepted enqueue (202) with run id
 - Optional deep-link to `/runs`; not folded into Fleet or Runs cockpit
 - Live: `tests/verify/04-w2-initiative-tracking.md` (human at wave-acceptance)
 - Ground contracts for W3: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W2.md` §Contracts produced
@@ -63,7 +66,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 ## W4 notes (CAP-D/E)
 
 - BFF: `app/api/gateflow/checkpoints` (`?op=status|history`); `app/api/gateflow/board` (`?op=list|create|status|link`)
-- UI: `/checkpoints`, `/board` — separate nav for `tenant_admin` (not folded into Fleet/Runs/Initiatives/Metrics)
+- UI: checkpoints render on **Runs** (018); `/checkpoints` redirects. Board is `/board` with admitted-repo dropdown.
 - Checkpoint miss: named no-run / not-found via `classifyCheckpointMiss` (never fabricate status)
 - Board list requires org/repo; create idempotent on initiative_id+type (`idempotent_replay`)
 - Live: `tests/verify/06-w4-checkpoints-board.md` (human at wave-acceptance)

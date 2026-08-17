@@ -6,12 +6,15 @@ import { env } from "@/lib/env";
 
 export interface EnteredProgrammeContext {
   programmeId: string;
-  tenantId: string;
+  /** Programme-bound tenant when gateflow exposes it; otherwise null. */
+  tenantId: string | null;
 }
 
 /**
  * Parse the programme-context cookie value. Never reads a JWT or tenant_id
  * claim. Malformed / missing → null (callers treat as not entered).
+ * programmeId is required; tenantId is optional (gateflow does not expose it
+ * to tenant_admin tokens today).
  */
 export function parseEnteredProgrammeContextCookie(
   raw: string | undefined | null,
@@ -22,11 +25,8 @@ export function parseEnteredProgrammeContextCookie(
     if (!parsed || typeof parsed !== "object") return null;
     const rec = parsed as Record<string, unknown>;
     const programmeId = rec.programmeId;
-    const tenantId = rec.tenantId;
-    if (typeof programmeId !== "string" || typeof tenantId !== "string") {
-      return null;
-    }
-    if (!programmeId || !tenantId) return null;
+    if (typeof programmeId !== "string" || !programmeId) return null;
+    const tenantId = typeof rec.tenantId === "string" && rec.tenantId ? rec.tenantId : null;
     return { programmeId, tenantId };
   } catch {
     return null;
@@ -49,5 +49,19 @@ export function programmeContextCookieOptions(): {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
+  };
+}
+
+/** Durable options for the last-programme hint cookie (survives login/logout). */
+export function lastProgrammeCookieOptions(): {
+  httpOnly: true;
+  sameSite: "lax";
+  secure: boolean;
+  path: "/";
+  maxAge: number;
+} {
+  return {
+    ...programmeContextCookieOptions(),
+    maxAge: 60 * 60 * 24 * 30,
   };
 }

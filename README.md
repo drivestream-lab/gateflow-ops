@@ -11,10 +11,9 @@ cp .env.example .env        # set UPSTREAM_BASE_URL → live gateflow
 npm run dev                 # default port 3000
 ```
 
-Sign in with gateflow credentials (`AUTH_MODE=jwt-upstream`). The **System status
-page** is the hello world — session, BFF probe of gateflow `GET /health`, design
-tokens, and i18n in one screen. Full script:
-`tests/verify/01-login-status-page.md`.
+Sign in with gateflow credentials (`AUTH_MODE=jwt-upstream`). `/` redirects to
+the role home (Programmes or Meta PRs / enter). Upstream health lives in chrome.
+Full script: `tests/verify/01-login-status-page.md`.
 
 **Configure:** `UPSTREAM_BASE_URL` must reach gateflow; `AUTH_MODE=dev-stub` is
 NOT for production (login only — status always uses `/health`).

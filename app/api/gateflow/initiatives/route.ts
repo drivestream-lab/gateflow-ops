@@ -14,21 +14,21 @@ async function requireTenant(request: NextRequest) {
   if (!token) return { error: bffError(401, "auth.errors.sessionExpired") as Response };
   const payload = decodeJwtPayload(token);
   const entered = await getEnteredProgrammeContext();
-  const tenantId = entered?.tenantId;
-  if (typeof tenantId !== "string" || !tenantId) {
+  const programmeId = entered?.programmeId;
+  if (typeof programmeId !== "string" || !programmeId) {
     return { error: bffError(400, "initiatives.errors.missingTenant") as Response };
   }
   const correlationId = request.headers.get("x-correlation-id") ?? crypto.randomUUID();
-  return { token, payload, tenantId, correlationId };
+  return { token, payload, programmeId, correlationId };
 }
 
 export async function GET(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
 
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -56,15 +56,21 @@ export async function GET(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-initiatives-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 
   try {
     const res = await upstreamFetch(`/api/v1/initiatives?${upstreamParams}`, { correlationId });
     if (!res.ok) {
-      logRequestError(logger, startTime, `upstream ${res.status}`, mapUpstreamStatus(res.status));
-      return bffError(mapUpstreamStatus(res.status), "initiatives.errors.loadFailed");
+      const mapped = mapUpstreamStatus(res.status);
+      logRequestError(logger, startTime, `upstream ${res.status}`, mapped);
+      return bffError(
+        mapped,
+        res.status === 503
+          ? "initiatives.errors.boardUnavailable"
+          : "initiatives.errors.loadFailed",
+      );
     }
     const raw = (await res.json()) as {
       initiatives?: Array<{
@@ -126,9 +132,9 @@ export async function POST(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
 
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -146,7 +152,7 @@ export async function POST(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-initiatives-closure-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 

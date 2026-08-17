@@ -21,45 +21,55 @@ describe("session-role", () => {
 });
 
 describe("navItemsForRole", () => {
-  it("shows Status + Programmes for platform_admin", () => {
+  it("shows Programmes + Identities for platform_admin", () => {
     const hrefs = navItemsForRole("platform_admin").map((i) => i.href);
-    expect(hrefs).toEqual(["/", "/programmes", "/identities"]);
+    expect(hrefs).toEqual(["/programmes", "/identities"]);
   });
 
-  it("shows Status + Enter + Tenant + Fleet + Runs + Initiatives + Metrics + Checkpoints + Board for tenant_admin", () => {
-    const hrefs = navItemsForRole("tenant_admin").map((i) => i.href);
-    expect(hrefs).toEqual([
-      "/",
-      "/programmes/enter",
-      "/tenant",
+  it("shows grouped delivery/work/observe items for tenant_admin", () => {
+    const items = navItemsForRole("tenant_admin");
+    expect(items.map((i) => i.href)).toEqual([
       "/fleet",
-      "/runs",
-      "/initiatives",
-      "/metrics",
-      "/checkpoints",
+      "/meta-prs",
+      "/spec-lane",
       "/board",
+      "/implement-lane",
+      "/closeout-lane",
+      "/initiative-closure",
+      "/runs",
+      "/metrics",
+    ]);
+    expect(items.map((i) => i.groupKey)).toEqual([
+      "nav.group.delivery",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.observe",
+      "nav.group.observe",
     ]);
   });
 
-  it("shows only unscoped items for unknown role", () => {
-    const hrefs = navItemsForRole("unknown").map((i) => i.href);
-    expect(hrefs).toEqual(["/"]);
-    expect(navItemsForRole(null).map((i) => i.href)).toEqual(["/"]);
+  it("shows no primary nav for unknown role", () => {
+    expect(navItemsForRole("unknown").map((i) => i.href)).toEqual([]);
+    expect(navItemsForRole(null).map((i) => i.href)).toEqual([]);
   });
 
   it("keeps WORKSPACE_NAV as the full catalog", () => {
     expect(WORKSPACE_NAV.map((i) => i.href)).toEqual([
-      "/",
       "/programmes",
       "/identities",
-      "/programmes/enter",
-      "/tenant",
       "/fleet",
-      "/runs",
-      "/initiatives",
-      "/metrics",
-      "/checkpoints",
+      "/meta-prs",
+      "/spec-lane",
       "/board",
+      "/implement-lane",
+      "/closeout-lane",
+      "/initiative-closure",
+      "/runs",
+      "/metrics",
     ]);
   });
 });

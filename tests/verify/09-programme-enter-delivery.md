@@ -31,7 +31,7 @@ context named refuse, secret strip, no JWT `tenant_id` fallback).
    REQ-22, REQ-26).
 2. Enter **programme P1**. Status / `/api/auth/me` shows
    `enteredProgrammeId` / `enteredTenantId` for P1 (not JWT `tenant_id`).
-   Open Fleet, Runs, Initiatives, Metrics, Checkpoints, Board, Tenant —
+   Open Fleet, Meta PRs, Runs (checkpoints section), Initiatives, Metrics, Board —
    016 delivery acts succeed in P1 (REQ-16, REQ-19). Network JSON has
    **no** `password` or `access_token`.
 3. Return to `/programmes/enter` and enter **programme P2**. Delivery now

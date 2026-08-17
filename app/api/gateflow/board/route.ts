@@ -12,12 +12,12 @@ async function requireTenant(request: NextRequest) {
   if (!token) return { error: bffError(401, "auth.errors.sessionExpired") as Response };
   const payload = decodeJwtPayload(token);
   const entered = await getEnteredProgrammeContext();
-  const tenantId = entered?.tenantId;
-  if (typeof tenantId !== "string" || !tenantId) {
+  const programmeId = entered?.programmeId;
+  if (typeof programmeId !== "string" || !programmeId) {
     return { error: bffError(400, "board.errors.missingTenant") as Response };
   }
   const correlationId = request.headers.get("x-correlation-id") ?? crypto.randomUUID();
-  return { payload, tenantId, correlationId };
+  return { payload, programmeId, correlationId };
 }
 
 async function readJsonBody(request: NextRequest): Promise<unknown> {
@@ -35,9 +35,9 @@ function str(value: unknown): string {
 export async function GET(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-board-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 
@@ -84,9 +84,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-board-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 
@@ -132,9 +132,8 @@ export async function POST(request: NextRequest) {
       if (projectOwner) createBody.project_owner = projectOwner;
       const parentTicketId = str(rec.parent_ticket_id);
       if (parentTicketId) createBody.parent_ticket_id = parentTicketId;
-      // Prefer session tenant for board defaults when caller omits project_number.
-      createBody.tenant_id = tenantId;
-
+      // No tenant_id from the entered context — gateflow applies its board
+      // default when project_number / tenant_id are omitted.
       const headers: Record<string, string> = { "content-type": "application/json" };
       const idem = request.headers.get("idempotency-key")?.trim();
       if (idem) headers["Idempotency-Key"] = idem;
@@ -194,9 +193,9 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   const gate = await requireTenant(request);
   if ("error" in gate && gate.error) return gate.error;
-  const { payload, tenantId, correlationId } = gate as {
+  const { payload, programmeId, correlationId } = gate as {
     payload: { sub?: string };
-    tenantId: string;
+    programmeId: string;
     correlationId: string;
   };
 
@@ -218,7 +217,7 @@ export async function PATCH(request: NextRequest) {
   const logger = createApiLogger(request.method, request.url, correlationId, {
     module: "gateflow-board-api",
     userId: payload?.sub as string,
-    tenantId,
+    programmeId,
   });
   const startTime = logRequestStart(logger);
 

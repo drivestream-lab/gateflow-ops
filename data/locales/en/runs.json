@@ -1,6 +1,8 @@
 {
   "page.title": "Runs",
-  "page.description": "Start wave lanes, inspect run timelines, and authorize forge external-action stops. Fleet admit is separate.",
+  "page.description": "Inspect run timelines, authorize forge stops, and query checkpoints. Start spec from Meta PRs; implement and closeout from the wave map. Fleet admit is separate.",
+  "advanced.cockpit": "Advanced — raw PE wave start",
+  "advanced.cockpitHint": "The operator walk starts spec from Meta PRs and later lanes from the wave map. This form is the PE-shaped fallback.",
   "filters.title": "Filters",
   "filters.initiativeId": "Initiative id",
   "filters.waveId": "Wave id",

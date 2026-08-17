@@ -3,5 +3,6 @@
   "app.description": "Gateflow operations console — runs, waves, and delivery status",
   "nav.logout": "Sign out",
   "errors.upstreamUnavailable": "The service is temporarily unavailable. Please try again.",
-  "errors.badRequest": "The request could not be processed."
+  "errors.badRequest": "The request could not be processed.",
+  "actions.cancel": "Cancel"
 }

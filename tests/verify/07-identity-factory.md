@@ -26,8 +26,8 @@ secret strip, name/email search filter).
 ## Steps
 
 1. Sign in on `/login` as **platform_admin**.
-2. Confirm left nav shows **Identities** (`/identities`) in addition to
-   System status and Programmes — not Tenant / Fleet (REQ-22).
+2. Confirm left nav shows **Identities** (`/identities`) and **Programmes** —
+   not Tenant / Fleet / System status (REQ-22). `/` redirects to Programmes.
 3. Open **Identities**. Enter a human: name, email, password. No programme
    field is present (REQ-01).
    - Success: the identity appears on the list with that name and email;

@@ -20,8 +20,9 @@ Live smoke against **real gateflow**. Unit ownership:
 
 ## Steps — Checkpoints (CAP-D)
 
-1. Sign in on `/login` as **tenant_admin**.
-2. Open **Checkpoints** (`/checkpoints`) from nav.
+1. Sign in on `/login` as **tenant_admin** and enter a programme.
+2. Open **Runs** from nav. Checkpoints are a section on that page
+   (`/checkpoints` redirects here). There is no Checkpoints nav row.
 3. **Live status — composed** (REQ-26): enter `checkpoint_id`, `initiative_id`,
    and `wave_id` for a wave **without** a matching run → UI shows named
    **“No run found for this wave”** (not a fabricated pass/fail verdict).
@@ -34,19 +35,21 @@ Live smoke against **real gateflow**. Unit ownership:
 ## Steps — Board (CAP-E)
 
 6. Open **Board** (`/board`) from nav.
-7. **List** (REQ-28): require org + repo; tickets list renders or honest empty.
-8. **Create** (REQ-29): create EPIC or Feature with `initiative_id` + type;
-   submit twice with same key/identity → second response shows
-   **idempotent replay** (existing ticket returned).
-9. **Status** (REQ-30): update ticket column and/or state; result reflected in
-   payload / subsequent list.
-10. **Link** (REQ-31): link a PR number to the ticket; `link_ref` (or equivalent
-    upstream field) present on success.
+7. **List** (REQ-28): pick an admitted repo from the dropdown (no typed
+   org/repo); ticket **table** renders or honest empty. Empty fleet shows
+   the named admit-first state.
+8. **Create** (REQ-29): header/create action inherits the selected repo;
+   create EPIC or Feature with `initiative_id` + type; submit twice with
+   same key/identity → second response shows **idempotent replay**.
+9. **Status** (REQ-30): row action updates column and/or state; result
+   reflected on the table / subsequent list.
+10. **Link** (REQ-31): row action links a PR number; `link_ref` (or
+    equivalent) present on success.
 
 ## Negative checks
 
 - Platform admin session cannot use Checkpoints or Board (redirect / wrong-role).
-- List without org/repo is refused (org/repo required).
+- List without a selected repo does not invent tickets.
 - Upstream failure surfaces a named error (no silent mock tickets or status).
 
 ## Pass

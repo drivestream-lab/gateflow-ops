@@ -7,54 +7,18 @@ import {
   IDENTITIES_PAGE_SIZE_MAX,
   PAGINATION,
 } from "@/lib/constants";
-import { isEmailIdentifier } from "@/lib/auth-login-upstream";
+import {
+  filterIdentitiesByQuery,
+  identityCreateRefuseKey,
+  identityCreateUpstreamBody,
+  stripIdentitySecrets,
+  UPSTREAM_IDENTITIES_PATH,
+  upstreamErrorDetail,
+  type IdentityDto,
+} from "@/lib/identities-directory";
 import { createApiLogger } from "@/lib/logging";
 import { requirePlatformAdminSession } from "@/lib/require-platform-admin";
 import { upstreamFetch } from "@/lib/upstream-fetch";
-
-export const UPSTREAM_IDENTITIES_PATH = "/api/v1/identities";
-
-export interface IdentityDto {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  suspended: boolean;
-}
-
-export function identityCreateRefuseKey(input: {
-  name?: string;
-  email?: string;
-  password?: string;
-}): string | null {
-  if (!input.name?.trim()) return "identities.errors.missingName";
-  const email = input.email?.trim() ?? "";
-  if (!isEmailIdentifier(email)) return "identities.errors.notAnEmail";
-  if (!input.password) return "identities.errors.missingPassword";
-  return null;
-}
-
-/** Whitelist DTO — never copies password or token fields (REQ-30). */
-export function stripIdentitySecrets(raw: unknown): IdentityDto | null {
-  if (!raw || typeof raw !== "object") return null;
-  const rec = raw as Record<string, unknown>;
-  const id = rec.id ?? rec.identity_id ?? rec.user_id;
-  const name = rec.name;
-  const email = rec.email ?? rec.credential_identifier;
-  if (typeof id !== "string" || !id) return null;
-  if (typeof name !== "string" || typeof email !== "string") return null;
-  const role = typeof rec.role === "string" ? rec.role : "tenant_admin";
-  const suspended = rec.suspended === true || rec.status === "suspended";
-  return { id, name, email, role, suspended };
-}
-
-export function filterIdentitiesByQuery(items: IdentityDto[], query: string): IdentityDto[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return items;
-  return items.filter(
-    (item) => item.name.toLowerCase().includes(q) || item.email.toLowerCase() === q,
-  );
-}
 
 function createErrorKey(status: number): string {
   if (status === 409) return "identities.errors.duplicateEmail";
@@ -94,7 +58,12 @@ export async function GET(request: NextRequest) {
       correlationId,
     });
     if (!res.ok) {
-      logRequestError(logger, startTime, `upstream ${res.status}`, mapUpstreamStatus(res.status));
+      logRequestError(
+        logger,
+        startTime,
+        await upstreamErrorDetail(res),
+        mapUpstreamStatus(res.status),
+      );
       return bffError(mapUpstreamStatus(res.status), "identities.errors.loadFailed");
     }
     const raw = (await res.json()) as unknown;
@@ -145,16 +114,16 @@ export async function POST(request: NextRequest) {
     const res = await upstreamFetch(UPSTREAM_IDENTITIES_PATH, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        name: body.name?.trim(),
-        email: body.email?.trim(),
-        password: body.password,
-        role: "tenant_admin",
-      }),
+      body: JSON.stringify(identityCreateUpstreamBody(body)),
       correlationId,
     });
     if (!res.ok) {
-      logRequestError(logger, startTime, `upstream ${res.status}`, mapUpstreamStatus(res.status));
+      logRequestError(
+        logger,
+        startTime,
+        await upstreamErrorDetail(res),
+        mapUpstreamStatus(res.status),
+      );
       return bffError(mapUpstreamStatus(res.status), createErrorKey(res.status));
     }
     const dto = stripIdentitySecrets(await res.json());

@@ -8,13 +8,13 @@ import { t, useTranslation } from "@/lib/i18n";
 
 interface GrantedProgramme {
   programmeId: string;
-  tenantId: string;
+  tenantId: string | null;
   programmeName: string | null;
 }
 
 interface EnterListResponse {
   programmes: GrantedProgramme[];
-  entered: { programmeId: string; tenantId: string } | null;
+  entered: { programmeId: string; tenantId: string | null } | null;
 }
 
 async function readError(res: Response, fallbackKey: string): Promise<Error> {
@@ -41,7 +41,7 @@ export function ProgrammeEnter() {
         body: JSON.stringify({ programmeId }),
       });
       if (!res.ok) throw await readError(res, "programmes.errors.actionFailed");
-      return (await res.json()) as { ok: boolean; programmeId: string; tenantId: string };
+      return (await res.json()) as { ok: boolean; programmeId: string; tenantId: string | null };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["auth", "programme"] });

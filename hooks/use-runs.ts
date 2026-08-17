@@ -146,6 +146,8 @@ export function useStartWave() {
     },
     onSuccess: () => {
       void client.invalidateQueries({ queryKey: ["gateflow", "runs"] });
+      void client.invalidateQueries({ queryKey: ["gateflow", "meta", "pulls"] });
+      void client.invalidateQueries({ queryKey: ["gateflow", "initiatives"] });
     },
   });
 }

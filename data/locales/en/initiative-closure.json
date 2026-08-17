@@ -1,0 +1,7 @@
+{
+  "page.title": "Initiative closure",
+  "page.description": "Start initiative closure when spec, implement, and closeout are done for this INIT.",
+  "start": "Start closure",
+  "dialog.title": "Initiative closure inputs",
+  "dialog.submit": "Start closure"
+}
