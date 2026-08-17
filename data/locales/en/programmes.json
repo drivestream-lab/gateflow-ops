@@ -15,7 +15,7 @@
   "enter.description": "You can enter only programmes you were granted. Zero grants means you belong to no programme.",
   "enter.empty": "You belong to no programme. Delivery is not available until a platform admin grants you entry.",
   "enter.current": "Currently entered",
-  "enter.success": "Programme entered. Delivery uses this programme.",
+  "enter.success": "Programme entered. Delivery opens on Meta PRs.",
   "enter.leaveSuccess": "Left the programme. Delivery is not available until you enter again.",
   "list.empty": "No programmes yet. Onboard one to get started.",
   "list.columns.name": "Name",

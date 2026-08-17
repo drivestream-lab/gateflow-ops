@@ -36,7 +36,8 @@ export function WorkspaceNav({ role }: WorkspaceNavProps) {
             <Link
               href={item.href}
               className={cn(
-                "block rounded-md px-3 py-2 text-sm transition-colors",
+                "block rounded-md py-2 text-sm transition-colors",
+                item.groupKey ? "ml-3 border-l border-border pl-3 pr-3" : "px-3",
                 active
                   ? "bg-accent text-accent-foreground font-medium"
                   : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",

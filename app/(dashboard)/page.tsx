@@ -9,7 +9,7 @@ export default async function HomeRedirectPage() {
   if (isPlatformAdmin(session)) redirect("/programmes");
   if (isTenantAdmin(session)) {
     const entered = await getEnteredProgrammeContext();
-    redirect(entered ? "/runs" : "/programmes/enter");
+    redirect(entered ? "/meta-prs" : "/programmes/enter");
   }
   redirect("/login");
 }

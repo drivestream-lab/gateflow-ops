@@ -20,7 +20,15 @@ export default async function RunsPage() {
       <PageHeader title={t("runs.page.title")} description={t("runs.page.description")} />
       <PageBody>
         <div className="space-y-8">
-          <RunCockpit />
+          <details className="rounded-md border border-border bg-surface p-4">
+            <summary className="cursor-pointer text-sm font-medium">
+              {t("runs.advanced.cockpit")}
+            </summary>
+            <p className="mb-4 mt-2 text-sm text-muted-foreground">
+              {t("runs.advanced.cockpitHint")}
+            </p>
+            <RunCockpit />
+          </details>
           <section>
             <h2 className="mb-3 text-lg font-semibold">{t("checkpoints.page.title")}</h2>
             <p className="mb-4 text-sm text-muted-foreground">

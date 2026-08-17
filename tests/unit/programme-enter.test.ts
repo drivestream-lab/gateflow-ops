@@ -30,6 +30,9 @@ const DELIVERY_BFF_PATHS = [
   "app/api/gateflow/checkpoints/route.ts",
   "app/api/gateflow/board/route.ts",
   "app/api/gateflow/tenants/route.ts",
+  "app/api/gateflow/meta/pulls/route.ts",
+  "app/api/gateflow/meta/pulls/onboarded/route.ts",
+  "app/api/gateflow/meta/pulls/onboard/route.ts",
 ] as const;
 
 const MISSING_CONTEXT_KEYS = [

@@ -12,7 +12,7 @@ npm run dev                 # default port 3000
 ```
 
 Sign in with gateflow credentials (`AUTH_MODE=jwt-upstream`). `/` redirects to
-the role home (Programmes or Runs / enter). Upstream health lives in chrome.
+the role home (Programmes or Meta PRs / enter). Upstream health lives in chrome.
 Full script: `tests/verify/01-login-status-page.md`.
 
 **Configure:** `UPSTREAM_BASE_URL` must reach gateflow; `AUTH_MODE=dev-stub` is

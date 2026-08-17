@@ -1,0 +1,17 @@
+{
+  "page.title": "Spec lane",
+  "page.description": "Start spec from an onboarded, attested INIT-* row. Choose the admitted repo, then runner and model in the popup.",
+  "columns.initiative": "Initiative",
+  "columns.repo": "Repo",
+  "columns.prdPr": "PRD PR",
+  "columns.specPr": "Spec PR",
+  "columns.status": "Status",
+  "columns.action": "Action",
+  "status.not_started": "Not started",
+  "status.open": "Open",
+  "status.closed": "Closed",
+  "start": "Start spec",
+  "dialog.title": "Spec lane inputs",
+  "dialog.submit": "Start spec",
+  "emptyFleet": "Admit a repo on Fleet before starting spec."
+}

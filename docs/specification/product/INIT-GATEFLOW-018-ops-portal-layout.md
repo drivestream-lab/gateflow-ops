@@ -48,10 +48,10 @@ item** go away.
 
 ## Role homes
 
-| Actor            | After sign-in `/` goes to                           |
-| ---------------- | --------------------------------------------------- |
-| `platform_admin` | `/programmes`                                       |
-| `tenant_admin`   | `/programmes/enter` if helper is null; else `/runs` |
+| Actor            | After sign-in `/` goes to                                                           |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| `platform_admin` | `/programmes`                                                                       |
+| `tenant_admin`   | `/programmes/enter` if helper is null; else `/meta-prs` (019 supersedes Q1 `/runs`) |
 
 `/` itself is a redirect, not a third home.
 
@@ -64,11 +64,13 @@ item** go away.
 
 **`tenant_admin`** (after enter)
 
-| Group    | Items               |
-| -------- | ------------------- |
-| Delivery | Fleet · Runs        |
-| Work     | Initiatives · Board |
-| Observe  | Metrics             |
+| Group    | Items                                                                                    |
+| -------- | ---------------------------------------------------------------------------------------- |
+| Delivery | Fleet                                                                                    |
+| Work     | Meta PRs · Spec lane · Board · Implement lane · Closeout lane · Initiative closure (019) |
+| Observe  | Runs · Metrics                                                                           |
+
+019 supersedes the original Q1 home (`/runs`) and moves Runs under Observe. `/meta-prs` is the entered start surface.
 
 Checkpoints stay reachable from a run / PR (016 REQ-26–27). They are **not**
 required as a top-level nav item. `/checkpoints` may remain as a bookmark
@@ -136,7 +138,7 @@ optional / collapsed. Server create remains idempotent on initiative id + type.
 
 | #   | Question                                                               | Recommendation                       |
 | --- | ---------------------------------------------------------------------- | ------------------------------------ |
-| Q1  | Role home for entered `tenant_admin`: `/runs` or a new dashboard?      | `/runs` — work queue, no new page    |
+| Q1  | Role home for entered `tenant_admin`: `/runs` or a new dashboard?      | **Superseded by 019:** `/meta-prs`   |
 | Q2  | Checkpoints: fold into Runs, or keep `/checkpoints` without a nav row? | Fold into Runs; keep URL as redirect |
 | Q3  | Create ticket: dialog vs right Context panel?                          | Dialog — list stays the only Card    |
 | Q4  | Keep `/tenant` as a deep link with no nav, or redirect to chrome only? | Deep link, no nav                    |

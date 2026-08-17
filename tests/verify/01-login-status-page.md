@@ -29,7 +29,7 @@ Unit tests owning shared logic: `tests/unit/auth.test.ts`,
 4. Expect a **role home** inside WorkspaceShell (not a System status page):
    - `platform_admin` lands on **Programmes**
    - `tenant_admin` with no entered programme lands on **Enter a programme**
-   - `tenant_admin` after enter lands on **Runs**
+   - `tenant_admin` after enter lands on **Meta PRs** (`/meta-prs`)
    - Chrome shows upstream health (connected / unreachable) — not a nav item
    - Sidebar shows the signed-in operator; no “System status” nav row
 5. `curl -s localhost:3000/api/health` → `{"status":"ok"}` (this app’s own health)

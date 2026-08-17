@@ -19,7 +19,7 @@ Live smoke against **real gateflow**. Unit ownership:
 ## Steps
 
 1. Sign in on `/login` as **tenant_admin**.
-2. Open **Initiatives** (`/initiatives`) from nav (REQ-13 surface).
+2. Open **Spec lane** (`/spec-lane`) or **Implement lane** (`/implement-lane`) from Work nav. There is no `/initiatives` page (REQ-13 surfaces moved to lane routes).
 3. Select an **admitted repo** from the dropdown (same fleet list as Board)
    (REQ-13):
    - List loads without typing org/repo.

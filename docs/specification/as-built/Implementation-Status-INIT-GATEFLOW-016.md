@@ -44,7 +44,7 @@ Initiative detail. Index row lives in `implementation-status.md`.
 ## W2 notes (CAP-F)
 
 - BFF: `app/api/gateflow/initiatives` (list + `?op=closure-start`), `initiatives/by-id` (`?op=` detail/waves/spec/implementation/closeout/merge/completion/closure)
-- UI: `/initiatives` — `components/initiatives/initiative-hub.tsx`; nav `tenant_admin` → Initiatives
+- UI: 019 removed `/initiatives`. CAP-F BFF remains; operator surfaces are Spec / Implement / Closeout / Initiative closure lanes
 - Fleet-repo dropdown (same admitted list as Board); list loads without typed org/repo
 - Composition displayed as-is; gaps labeled empty/unavailable (no invented board/GitHub fields)
 - Closure start: workspace derived as `{workspace_root}/{org}/{repo}`; operator enters

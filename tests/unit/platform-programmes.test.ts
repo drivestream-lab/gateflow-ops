@@ -27,8 +27,29 @@ describe("navItemsForRole", () => {
   });
 
   it("shows grouped delivery/work/observe items for tenant_admin", () => {
-    const hrefs = navItemsForRole("tenant_admin").map((i) => i.href);
-    expect(hrefs).toEqual(["/fleet", "/runs", "/initiatives", "/board", "/metrics"]);
+    const items = navItemsForRole("tenant_admin");
+    expect(items.map((i) => i.href)).toEqual([
+      "/fleet",
+      "/meta-prs",
+      "/spec-lane",
+      "/board",
+      "/implement-lane",
+      "/closeout-lane",
+      "/initiative-closure",
+      "/runs",
+      "/metrics",
+    ]);
+    expect(items.map((i) => i.groupKey)).toEqual([
+      "nav.group.delivery",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.work",
+      "nav.group.observe",
+      "nav.group.observe",
+    ]);
   });
 
   it("shows no primary nav for unknown role", () => {
@@ -41,9 +62,13 @@ describe("navItemsForRole", () => {
       "/programmes",
       "/identities",
       "/fleet",
-      "/runs",
-      "/initiatives",
+      "/meta-prs",
+      "/spec-lane",
       "/board",
+      "/implement-lane",
+      "/closeout-lane",
+      "/initiative-closure",
+      "/runs",
       "/metrics",
     ]);
   });
