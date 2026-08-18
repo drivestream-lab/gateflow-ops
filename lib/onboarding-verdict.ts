@@ -32,6 +32,32 @@ const FAIL_SELECT: ReadonlySet<SelectOutcome> = new Set([
 
 const ADMIT_SELECT: ReadonlySet<SelectOutcome> = new Set(["ok", "already_selected"]);
 
+export type OnboardingVerdictView =
+  | { kind: "none" }
+  | { kind: "checking" }
+  | { kind: "verdict"; verdict: OnboardingVerdict };
+
+export function isAdmitSelectOutcome(outcome: SelectOutcome): boolean {
+  return ADMIT_SELECT.has(outcome);
+}
+
+export function resolveOnboardingVerdictView(
+  selectOutcome: SelectOutcome | null,
+  readiness: ReadinessSignals | null,
+  awaitingReadiness: boolean,
+): OnboardingVerdictView {
+  if (selectOutcome == null) {
+    return { kind: "none" };
+  }
+  if (isAdmitSelectOutcome(selectOutcome) && readiness == null && awaitingReadiness) {
+    return { kind: "checking" };
+  }
+  return {
+    kind: "verdict",
+    verdict: composeOnboardingVerdict(selectOutcome, readiness),
+  };
+}
+
 export function composeOnboardingVerdict(
   selectOutcome: SelectOutcome,
   readiness: ReadinessSignals | null,

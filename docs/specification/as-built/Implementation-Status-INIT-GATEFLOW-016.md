@@ -16,7 +16,9 @@ Initiative detail. Index row lives in `implementation-status.md`.
 - BFF: `app/api/gateflow/tenants`, `tenants/users`, `programme?op=…` (connect forwards `org`/`repo` only — no `ref`)
 - Fleet UI: one Card — catalogue table with In fleet / Available blocks,
   highlighted admitted rows + Detach, inline verdict, meta footer; admit ≠ wave start
-- Pure verdict: `lib/onboarding-verdict.ts` → pass\|fail fleet onboard only
+- Pure verdict: `lib/onboarding-verdict.ts` → pass\|fail fleet onboard only.
+  Admit outcomes wait for readiness (`checking`) so the UI does not flash Fail
+  before `POST …/readiness/refresh` returns.
 - Shell: `components/workspace/*` via `app/(dashboard)/layout.tsx`
 - Ground contracts for W1: see `docs/specification/reports/Ground-Report-INIT-GATEFLOW-016-W0.md` §Contracts produced
 - Dependency: gateflow auto-connect on programme create = product Q-4 (manual connect until then)
