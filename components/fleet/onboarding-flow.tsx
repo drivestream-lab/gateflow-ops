@@ -16,7 +16,11 @@ import {
 } from "@/hooks/use-programme";
 import { useTenant } from "@/hooks/use-tenant";
 import { composeFleetRows, fleetRepoKey } from "@/lib/fleet-rows";
-import { composeOnboardingVerdict, type SelectOutcome } from "@/lib/onboarding-verdict";
+import {
+  isAdmitSelectOutcome,
+  resolveOnboardingVerdictView,
+  type SelectOutcome,
+} from "@/lib/onboarding-verdict";
 import { useTranslation, t } from "@/lib/i18n";
 
 function outcomeLabel(outcome: SelectOutcome): string {
@@ -62,18 +66,24 @@ export function OnboardingFlow() {
     }
   }, [connectionMissing, connect]);
 
-  const verdict = useMemo(() => {
-    if (!lastSelect) return null;
-    return composeOnboardingVerdict(
-      lastSelect.outcome,
+  const verdictView = useMemo(() => {
+    const awaitingReadiness =
+      lastSelect != null &&
+      isAdmitSelectOutcome(lastSelect.outcome) &&
+      lastReadiness == null &&
+      !refreshReadiness.isError;
+    return resolveOnboardingVerdictView(
+      lastSelect?.outcome ?? null,
       lastReadiness
         ? {
             harness_verified: lastReadiness.harness_verified,
             verdict_type: lastReadiness.verdict_type,
           }
         : null,
+      awaitingReadiness,
     );
-  }, [lastSelect, lastReadiness]);
+  }, [lastSelect, lastReadiness, refreshReadiness.isError]);
+  const verdict = verdictView.kind === "verdict" ? verdictView.verdict : null;
 
   const connection = connectionQuery.connection;
   const rows = useMemo(
@@ -123,11 +133,16 @@ export function OnboardingFlow() {
         </Button>
       </div>
 
-      {(lastSelect || verdict) && (
+      {(lastSelect || verdictView.kind !== "none") && (
         <div className="mb-4 space-y-1 border-b border-border pb-4">
           {lastSelect ? (
             <p className="text-sm">
               {lastSelect.org}/{lastSelect.repo}: {outcomeLabel(lastSelect.outcome)}
+            </p>
+          ) : null}
+          {verdictView.kind === "checking" ? (
+            <p className="text-sm text-muted-foreground" data-verdict="checking">
+              {tf("verdict.checking")}
             </p>
           ) : null}
           {verdict ? (

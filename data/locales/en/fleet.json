@@ -28,6 +28,7 @@
   "active.empty": "No repos in the fleet yet.",
   "verdict.pass": "Pass",
   "verdict.fail": "Fail",
+  "verdict.checking": "Checking readiness…",
   "verdict.label": "Fleet onboard verdict",
   "outcomes.ok": "Admitted successfully",
   "outcomes.already_selected": "Already in the fleet",

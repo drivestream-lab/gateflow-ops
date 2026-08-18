@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   composeOnboardingVerdict,
+  resolveOnboardingVerdictView,
   type SelectOutcome,
   type ReadinessVerdictType,
 } from "@/lib/onboarding-verdict";
@@ -67,6 +68,45 @@ describe("composeOnboardingVerdict", () => {
 
   it("fails when readiness is missing after admit", () => {
     expect(composeOnboardingVerdict("ok", null).verdict).toBe("fail");
+  });
+
+  it("does not paint fail while admit is awaiting readiness", () => {
+    expect(
+      resolveOnboardingVerdictView("ok", null, true),
+    ).toEqual({ kind: "checking" });
+    expect(
+      resolveOnboardingVerdictView("already_selected", null, true),
+    ).toEqual({ kind: "checking" });
+  });
+
+  it("paints fail immediately for blocking select outcomes", () => {
+    const view = resolveOnboardingVerdictView("status_failed", null, true);
+    expect(view).toEqual({
+      kind: "verdict",
+      verdict: { verdict: "fail", reasonKey: "fleet.outcomes.status_failed" },
+    });
+  });
+
+  it("paints pass when admit select and ready signals are both present", () => {
+    expect(
+      resolveOnboardingVerdictView(
+        "ok",
+        { harness_verified: true, verdict_type: "ready" },
+        false,
+      ),
+    ).toEqual({
+      kind: "verdict",
+      verdict: { verdict: "pass", reasonKey: "fleet.outcomes.ok" },
+    });
+  });
+
+  it("fails closed when readiness never arrives after admit", () => {
+    expect(
+      resolveOnboardingVerdictView("ok", null, false),
+    ).toEqual({
+      kind: "verdict",
+      verdict: { verdict: "fail", reasonKey: "fleet.reasons.missing_readiness" },
+    });
   });
 
   it("fails when readiness is not ready or tool unavailable", () => {
